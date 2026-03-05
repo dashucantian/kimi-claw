@@ -1,0 +1,44 @@
+# Phase 3: 媒体处理能力
+version: 3.3.0
+updates:
+  - type: feature
+    id: ffmpeg-container
+    title: FFmpeg媒体处理容器
+    description: 支持音频裁剪、音量调整、循环生成
+    status: implemented
+    
+  - type: feature
+    id: audio-api
+    title: 音频处理API
+    description: RESTful API，支持各种音频操作
+    status: implemented
+    
+  - type: integration
+    id: openclaw-integration
+    title: OpenClaw集成
+    description: AI可直接调用音频处理能力
+    status: planned
+
+api_endpoints:
+  - path: /audio/volume
+    method: POST
+    description: 调整音量
+    
+  - path: /audio/trim
+    method: POST
+    description: 裁剪音频
+    
+  - path: /audio/loop
+    method: POST
+    description: 创建循环
+    
+  - path: /audio/info
+    method: POST
+    description: 获取音频信息
+
+capabilities:
+  - 音量调整（0.1-100倍）
+  - 音频裁剪（精确到毫秒）
+  - 循环生成（指定时长）
+  - 格式转换（mp3/wav/ogg）
+  - 音频合并（多文件拼接）

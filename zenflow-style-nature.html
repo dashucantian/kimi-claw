@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenFlow - 自然禅修</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --forest-green: #2D5A3D;
+            --forest-light: #4A7C59;
+            --forest-dark: #1A3D28;
+            --ocean-blue: #3B7A9E;
+            --ocean-light: #5BA3C6;
+            --ocean-deep: #1E4A5F;
+            --earth-brown: #8B6F47;
+            --earth-light: #B8956A;
+            --sun-gold: #D4A84B;
+            --sun-light: #E8C878;
+            --cream: #F5F1E8;
+            --sage: #9CAF88;
+            --mist: #E8EDE5;
+        }
+        
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--mist) 0%, var(--cream) 50%, #E8F4E8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--forest-dark);
+        }
+        
+        /* 自然纹理背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(ellipse at 20% 30%, rgba(156, 175, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(59, 122, 158, 0.08) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background: rgba(245, 241, 232, 0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 60px rgba(45, 90, 61, 0.1);
+        }
+        
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 底部导航 */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px 30px 0 0;
+            padding: 12px 24px 24px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -4px 30px rgba(45, 90, 61, 0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 16px;
+        }
+        
+        .nav-item:hover {
+            background: rgba(156, 175, 136, 0.2);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--forest-green), var(--forest-light));
+            color: white;
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(45, 90, 61, 0.3);
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* 首页样式 */
+        .home-header {
+            padding: 50px 24px 30px;
+            background: linear-gradient(180deg, var(--forest-green) 0%, var(--forest-light) 100%);
+            border-radius: 0 0 40px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .home-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 168, 75, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .greeting {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .date {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        .daily-quote {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            border-left: 4px solid var(--sun-gold);
+        }
+        
+        .quote-text {
+            font-size: 15px;
+            line-height: 1.6;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .quote-author {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* 呼吸圆环 - 树叶扩散效果 */
+        .breathe-section {
+            padding: 40px 24px;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .leaf-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--forest-green);
+        }
+        
+        .breathe-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto;
+        }
+        
+        .breathe-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, var(--forest-green), var(--ocean-blue));
+            opacity: 0.1;
+            animation: breathe 8s ease-in-out infinite;
+        }
+        
+        .ring-2 {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            background: linear-gradient(135deg, var(--forest-light), var(--ocean-light));
+            opacity: 0.15;
+            animation: breathe 8s ease-in-out infinite 0.5s;
+        }
+        
+        .ring-3 {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            background: linear-gradient(135deg, var(--sage), var(--sun-gold));
+            opacity: 0.2;
+            animation: breathe 8s ease-in-out infinite 1s;
+        }
+        
+        .ring-4 {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            background: linear-gradient(135deg, var(--forest-green), var(--forest-light));
+            opacity: 0.3;
+            animation: breathe 8s ease-in-out infinite 1.5s;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.15); opacity: 0.3; }
+        }
+        
+        .breathe-center {
+            position: absolute;
+            width: 35%;
+            height: 35%;
+            top: 32.5%;
+            left: 32.5%;
+            background: linear-gradient(135deg, var(--forest-green), var(--ocean-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 10px 40px rgba(45, 90, 61, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .breathe-center:hover {
+            transform: scale(1.05);
+        }
+        
+        .breathe-text {
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .breathe-instruction {
+            margin-top: 24px;
+            font-size: 16px;
+            color: var(--forest-dark);
+            font-weight: 600;
+        }
+        
+        /* 快捷功能卡片 */
+        .quick-actions {
+            padding: 0 24px 30px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(45, 90, 61, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--forest-green), var(--ocean-blue));
+        }
+        
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(45, 90, 61, 0.15);
+        }
+        
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .action-icon.forest { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); }
+        .action-icon.ocean { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); }
+        .action-icon.earth { background: linear-gradient(135deg, #F3E5F5, #E1BEE7); }
+        .action-icon.sun { background: linear-gradient(135deg, #FFF8E1, #FFECB3); }
+        
+        .action-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 12px;
+            color: var(--earth-brown);
+        }
+        
+        /* 播放器页面 */
+        .player-header {
+            padding: 50px 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateX(-4px);
+        }
+        
+        .player-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--forest-dark);
+        }
+        
+        .player-visual {
+            padding: 40px 24px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .sound-wave {
+            width: 300px;
+            height: 300px;
+            position: relative;
+        }
+        
+        .wave-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .wave-1 {
+            width: 100%;
+            height: 100%;
+            border-color: var(--forest-green);
+            opacity: 0.3;
+            animation: wave 3s ease-out infinite;
+        }
+        
+        .wave-2 {
+            width: 80%;
+            height: 80%;
+            border-color: var(--ocean-blue);
+            opacity: 0.4;
+            animation: wave 3s ease-out infinite 0.5s;
+        }
+        
+        .wave-3 {
+            width: 60%;
+            height: 60%;
+            border-color: var(--sage);
+            opacity: 0.5;
+            animation: wave 3s ease-out infinite 1s;
+        }
+        
+        .wave-4 {
+            width: 40%;
+            height: 40%;
+            border-color: var(--sun-gold);
+            opacity: 0.6;
+            animation: wave 3s ease-out infinite 1.5s;
+        }
+        
+        @keyframes wave {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+        }
+        
+        .wave-center {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--forest-green), var(--ocean-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(45, 90, 61, 0.3);
+        }
+        
+        .play-icon {
+            width: 40px;
+            height: 40px;
+            fill: white;
+            margin-left: 4px;
+        }
+        
+        .player-info {
+            text-align: center;
+            padding: 0 24px 30px;
+        }
+        
+        .track-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 8px;
+        }
+        
+        .track-category {
+            font-size: 14px;
+            color: var(--earth-brown);
+        }
+        
+        .progress-container {
+            padding: 0 24px 30px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: rgba(45, 90, 61, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 35%;
+            background: linear-gradient(90deg, var(--forest-green), var(--ocean-blue));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--earth-brown);
+        }
+        
+        .player-controls {
+            padding: 0 24px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+        
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(45, 90, 61, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .control-btn.play {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--forest-green), var(--ocean-blue));
+        }
+        
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--forest-dark);
+        }
+        
+        .control-btn.play svg {
+            fill: white;
+            width: 28px;
+            height: 28px;
+        }
+        
+        /* 课程页面 */
+        .courses-header {
+            padding: 50px 24px 20px;
+        }
+        
+        .courses-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 8px;
+        }
+        
+        .courses-subtitle {
+            font-size: 14px;
+            color: var(--earth-brown);
+        }
+        
+        .category-tabs {
+            padding: 0 24px 20px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: white;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--earth-brown);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--forest-green), var(--forest-light));
+            color: white;
+        }
+        
+        .courses-grid {
+            padding: 0 24px 30px;
+            display: grid;
+            gap: 20px;
+        }
+        
+        .course-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(45, 90, 61, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(45, 90, 61, 0.15);
+        }
+        
+        .course-image {
+            height: 160px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-image.forest-bg {
+            background: linear-gradient(135deg, #2D5A3D 0%, #4A7C59 50%, #3B7A9E 100%);
+        }
+        
+        .course-image.ocean-bg {
+            background: linear-gradient(135deg, #1E4A5F 0%, #3B7A9E 50%, #5BA3C6 100%);
+        }
+        
+        .course-image.earth-bg {
+            background: linear-gradient(135deg, #8B6F47 0%, #B8956A 50%, #D4A84B 100%);
+        }
+        
+        .course-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .course-duration {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .course-content {
+            padding: 20px;
+        }
+        
+        .course-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .tag-forest { background: #E8F5E9; color: var(--forest-green); }
+        .tag-ocean { background: #E3F2FD; color: var(--ocean-blue); }
+        .tag-earth { background: #F3E5F5; color: var(--earth-brown); }
+        
+        .course-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 8px;
+        }
+        
+        .course-desc {
+            font-size: 13px;
+            color: var(--earth-brown);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--earth-brown);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* 个人中心 */
+        .profile-header {
+            padding: 50px 24px 30px;
+            background: linear-gradient(180deg, var(--forest-green) 0%, var(--forest-light) 100%);
+            border-radius: 0 0 40px 40px;
+            color: white;
+            text-align: center;
+        }
+        
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+        }
+        
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--sun-gold), var(--sun-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        
+        .avatar-ring {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 3px solid rgba(212, 168, 75, 0.5);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .profile-level {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .stats-container {
+            padding: 30px 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(45, 90, 61, 0.08);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--forest-green);
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--earth-brown);
+        }
+        
+        .menu-section {
+            padding: 0 24px 30px;
+        }
+        
+        .menu-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 16px;
+            padding-left: 8px;
+        }
+        
+        .menu-list {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(45, 90, 61, 0.08);
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item:hover {
+            background: rgba(156, 175, 136, 0.1);
+        }
+        
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 20px;
+        }
+        
+        .menu-icon.green { background: #E8F5E9; }
+        .menu-icon.blue { background: #E3F2FD; }
+        .menu-icon.orange { background: #FFF3E0; }
+        .menu-icon.purple { background: #F3E5F5; }
+        .menu-icon.red { background: #FFEBEE; }
+        
+        .menu-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--forest-dark);
+        }
+        
+        .menu-arrow {
+            width: 20px;
+            height: 20px;
+            opacity: 0.3;
+        }
+        
+        /* 树叶飘落动画 */
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+            animation: fall linear infinite;
+        }
+        
+        .leaf::before {
+            content: '🍃';
+            font-size: 16px;
+        }
+        
+        .leaf:nth-child(1) { left: 10%; animation-duration: 12s; animation-delay: 0s; }
+        .leaf:nth-child(2) { left: 30%; animation-duration: 15s; animation-delay: 2s; }
+        .leaf:nth-child(3) { left: 50%; animation-duration: 10s; animation-delay: 4s; }
+        .leaf:nth-child(4) { left: 70%; animation-duration: 14s; animation-delay: 1s; }
+        .leaf:nth-child(5) { left: 90%; animation-duration: 11s; animation-delay: 3s; }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 水波纹效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 122, 158, 0.3) 0%, transparent 70%);
+            transform: scale(0);
+            animation: ripple-effect 2s ease-out;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="falling-leaves">
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+    </div>
+    
+    <div class="app-container">
+        <!-- 首页 -->
+        <div class="page active" id="home">
+            <div class="home-header">
+                <div class="greeting">早安，修行者</div>
+                <div class="date" id="current-date">2026年2月24日 星期二</div>
+                <div class="daily-quote">
+                    <div class="quote-text">"心如止水，方能映照万物。在自然的怀抱中，找到内心的宁静。"</div>
+                    <div class="quote-author">— 禅语</div>
+                </div>
+            </div>
+            
+            <div class="breathe-section">
+                <div class="section-title">
+                    <svg class="leaf-icon" viewBox="0 0 24 24">
+                        <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+                    </svg>
+                    呼吸冥想
+                </div>
+                <div class="breathe-container">
+                    <div class="breathe-ring ring-1"></div>
+                    <div class="breathe-ring ring-2"></div>
+                    <div class="breathe-ring ring-3"></div>
+                    <div class="breathe-ring ring-4"></div>
+                    <div class="breathe-center">
+                        <div class="breathe-text">
+                            开始<br>呼吸
+                        </div>
+                    </div>
+                </div>
+                <div class="breathe-instruction">跟随圆环的律动，吸气... 呼气...</div>
+            </div>
+            
+            <div class="quick-actions">
+                <div class="action-card" onclick="showPage('player')">
+                    <div class="action-icon forest">🌲</div>
+                    <div class="action-title">森林冥想</div>
+                    <div class="action-desc">聆听林间的宁静</div>
+                </div>
+                <div class="action-card" onclick="showPage('player')">
+                    <div class="action-icon ocean">🌊</div>
+                    <div class="action-title">海洋疗愈</div>
+                    <div class="action-desc">感受海浪的韵律</div>
+                </div>
+                <div class="action-card" onclick="showPage('courses')">
+                    <div class="action-icon earth">🧘</div>
+                    <div class="action-title">正念课程</div>
+                    <div class="action-desc">系统学习禅修</div>
+                </div>
+                <div class="action-card" onclick="showPage('profile')">
+                    <div class="action-icon sun">📊</div>
+                    <div class="action-title">修行记录</div>
+                    <div class="action-desc">查看你的成长</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 播放器页面 -->
+        <div class="page" id="player">
+            <div class="player-header">
+                <div class="back-btn" onclick="showPage('home')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5A3D">
+                        <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/>
+                    </svg>
+                </div>
+                <div class="player-title">正在播放</div>
+            </div>
+            
+            <div class="player-visual">
+                <div class="sound-wave">
+                    <div class="wave-circle wave-1"></div>
+                    <div class="wave-circle wave-2"></div>
+                    <div class="wave-circle wave-3"></div>
+                    <div class="wave-circle wave-4"></div>
+                    <div class="wave-center">
+                        <svg class="play-icon" viewBox="0 0 24 24">
+                            <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="player-info">
+                <div class="track-name">森林晨雾</div>
+                <div class="track-category">自然音效 · 冥想</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="time-display">
+                    <span>8:45</span>
+                    <span>25:00</span>
+                </div>
+            </div>
+            
+            <div class="player-controls">
+                <div class="control-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6,6H8V18H6M9.5,12L18,6V18M9.5,12L18,6V18L9.5,12Z"/>
+                    </svg>
+                </div>
+                <div class="control-btn play">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                    </svg>
+                </div>
+                <div class="control-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6,18L14.5,12L6,6M8,9.86L11.03,12L8,14.14M16,6H18V18H16V6Z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 课程页面 -->
+        <div class="page" id="courses">
+            <div class="courses-header">
+                <div class="courses-title">禅修课程</div>
+                <div class="courses-subtitle">探索内心的宁静之旅</div>
+            </div>
+            
+            <div class="category-tabs">
+                <div class="tab active">全部</div>
+                <div class="tab">入门</div>
+                <div class="tab">进阶</div>
+                <div class="tab">睡眠</div>
+                <div class="tab">专注</div>
+            </div>
+            
+            <div class="courses-grid">
+                <div class="course-card" onclick="showPage('player')">
+                    <div class="course-image forest-bg">
+                        <div class="course-duration">15 分钟</div>
+                    </div>
+                    <div class="course-content">
+                        <span class="course-tag tag-forest">森林冥想</span>
+                        <div class="course-name">林间漫步</div>
+                        <div class="course-desc">在虚拟的森林中漫步，聆听鸟鸣与风声，让心灵回归自然的怀抱。</div>
+                        <div class="course-meta">
+                            <span class="meta-item">👤 1.2万人学习</span>
+                            <span class="meta-item">⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card" onclick="showPage('player')">
+                    <div class="course-image ocean-bg">
+                        <div class="course-duration">20 分钟</div>
+                    </div>
+                    <div class="course-content">
+                        <span class="course-tag tag-ocean">海洋疗愈</span>
+                        <div class="course-name">深海呼吸</div>
+                        <div class="course-desc">跟随海浪的节奏进行深呼吸练习，释放压力，找回内心的平静。</div>
+                        <div class="course-meta">
+                            <span class="meta-item">👤 8,567人学习</span>
+                            <span class="meta-item">⭐ 4.8</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card" onclick="showPage('player')">
+                    <div class="course-image earth-bg">
+                        <div class="course-duration">10 分钟</div>
+                    </div>
+                    <div class="course-content">
+                        <span class="course-tag tag-earth">大地连接</span>
+                        <div class="course-name">扎根练习</div>
+                        <div class="course-desc">学习如何与大地建立连接，感受稳定与安全感，增强内在力量。</div>
+                        <div class="course-meta">
+                            <span class="meta-item">👤 5,234人学习</span>
+                            <span class="meta-item">⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card" onclick="showPage('player')">
+                    <div class="course-image forest-bg">
+                        <div class="course-duration">30 分钟</div>
+                    </div>
+                    <div class="course-content">
+                        <span class="course-tag tag-forest">深度放松</span>
+                        <div class="course-name">身体扫描</div>
+                        <div class="course-desc">从头到脚逐步放松身体每个部位，达到深度放松状态，改善睡眠质量。</div>
+                        <div class="course-meta">
+                            <span class="meta-item">👤 2.1万人学习</span>
+                            <span class="meta-item">⭐ 5.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 个人中心 -->
+        <div class="page" id="profile">
+            <div class="profile-header">
+                <div class="avatar-container">
+                    <div class="avatar-ring"></div>
+                    <div class="avatar">🧘</div>
+                </div>
+                <div class="profile-name">静心行者</div>
+                <div class="profile-level">修行等级：林间居士</div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">连续天数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">总时长(小时)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">42</div>
+                    <div class="stat-label">完成课程</div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">我的修行</div>
+                <div class="menu-list">
+                    <div class="menu-item">
+                        <div class="menu-icon green">📅</div>
+                        <div class="menu-text">修行日历</div>
+                        <svg class="menu-arrow" viewBox="0 0 24 24" fill="#8B6F47">
+                            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon blue">🏆</div>
+                        <div class="menu-text">成就徽章</div>
+                        <svg class="menu-arrow" viewBox="0 0 24 24" fill="#8B6F47">
+                            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon orange">📊</div>
+                        <div class="menu-text">数据统计</div>
+                        <svg class="menu-arrow" viewBox="0 0 24 24" fill="#8B6F47">
+                            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">设置</div>
+                <div class="menu-list">
+                    <div class="menu-item">
+                        <div class="menu-icon purple">🔔</div>
+                        <div class="menu-text">提醒设置</div>
+                        <svg class="menu-arrow" viewBox="0 0 24 24" fill="#8B6F47">
+                            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon green">🎵</div>
+                        <div class="menu-text">音效偏好</div>
+                        <svg class="menu-arrow" viewBox="0 0 24 24" fill="#8B6F47">
+                            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon red">⚙️</div>
+                        <div class="menu-text">通用设置</div>
+                        <svg class="menu-arrow" viewBox="0 0 24 24" fill="#8B6F47">
+                            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航 -->
+        <div class="nav-bar">
+            <div class="nav-item active" data-page="home" onclick="showPage('home')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
+                </svg>
+                <span class="nav-label">首页</span>
+            </div>
+            <div class="nav-item" data-page="player" onclick="showPage('player')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M12,3V13.55C11.41,13.21 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12Z"/>
+                </svg>
+                <span class="nav-label">播放</span>
+            </div>
+            <div class="nav-item" data-page="courses" onclick="showPage('courses')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
+                </svg>
+                <span class="nav-label">课程</span>
+            </div>
+            <div class="nav-item" data-page="profile" onclick="showPage('profile')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+                </svg>
+                <span class="nav-label">我的</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 页面切换
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === pageId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        // 更新日期
+        function updateDate() {
+            const date = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('current-date').textContent = date.toLocaleDateString('zh-CN', options);
+        }
+        
+        // 水波纹效果
+        function createRipple(e) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.width = ripple.style.height = '100px';
+            ripple.style.left = e.pageX - 50 + 'px';
+            ripple.style.top = e.pageY - 50 + 'px';
+            document.body.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 2000);
+        }
+        
+        // 点击创建水波纹
+        document.addEventListener('click', createRipple);
+        
+        // 呼吸圆环交互
+        document.querySelector('.breathe-center').addEventListener('click', function() {
+            const rings = document.querySelectorAll('.breathe-ring');
+            rings.forEach((ring, index) => {
+                ring.style.animation = 'none';
+                setTimeout(() => {
+                    ring.style.animation = `breathe 8s ease-in-out infinite ${index * 0.5}s`;
+                }, 100);
+            });
+        });
+        
+        // 分类标签切换
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 初始化
+        updateDate();
+        
+        // 播放控制
+        let isPlaying = false;
+        document.querySelector('.control-btn.play').addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            const icon = this.querySelector('svg');
+            if (isPlaying) {
+                icon.innerHTML = '<path d="M6,19H10V5H6V19M14,5V19H18V5H14Z"/>';
+            } else {
+                icon.innerHTML = '<path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>';
+            }
+        });
+        
+        // 进度条交互
+        document.querySelector('.progress-bar').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            document.querySelector('.progress-fill').style.width = (percent * 100) + '%';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "id": "zhiguan",
+  "name": "止观AI",
+  "description": "传统止观禅修数字化系统 - 心智训练基础设施",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "database": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["sqlite", "postgres"], "default": "sqlite" },
+          "connection": { "type": "string" }
+        }
+      },
+      "content": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "default": "./content" },
+          "cdnUrl": { "type": "string" }
+        }
+      },
+      "features": {
+        "type": "object",
+        "properties": {
+          "wearable": { "type": "boolean", "default": false },
+          "eeg": { "type": "boolean", "default": false },
+          "vr": { "type": "boolean", "default": false },
+          "analytics": { "type": "boolean", "default": true }
+        }
+      }
+    }
+  }
+}

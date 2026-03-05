@@ -1,0 +1,37 @@
+# Phase 1: 文件上传优化
+version: 3.1.0
+updates:
+  - type: feature
+    id: file-upload-checker
+    title: 文件上传状态检查服务
+    description: 解决飞书文件上传时序问题
+    status: implemented
+    
+  - type: improvement
+    id: upload-prompts
+    title: 用户上传提示优化
+    description: 增加上传状态提示和确认机制
+    status: implemented
+    
+  - type: optimization
+    id: upload-timeout
+    title: 上传超时处理
+    description: 30秒超时机制，防止无限等待
+    status: implemented
+
+integration:
+  - component: feishu-webhook
+    change: 增加文件上传预处理
+    
+  - component: ai-response
+    change: 增加上传确认话术
+
+testing:
+  - case: 正常上传
+    expected: 3-5秒内完成
+    
+  - case: 大文件上传
+    expected: 10-30秒内完成
+    
+  - case: 超时处理
+    expected: 30秒后提示超时

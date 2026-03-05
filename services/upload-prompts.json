@@ -1,0 +1,8 @@
+{
+  "zh": {
+    "waiting": "📤 文件上传确认\n\n检测到文件上传请求：{fileName}\n\n⏳ 正在等待上传完成...\n\n💡 提示：大文件可能需要3-10秒，请稍候",
+    "completed": "✅ 文件上传完成\n\n文件名：{fileName}\n大小：{fileSize} MB\n耗时：{elapsed}ms\n\n可以继续发送处理指令了",
+    "timeout": "❌ 文件上传超时\n\n文件名：{fileName}\n\n可能原因：\n1. 文件过大\n2. 网络不稳定\n3. 上传被取消\n\n请重新上传",
+    "not_found": "⚠️ 未找到文件\n\n文件名：{fileName}\n\n请确认：\n1. 文件是否已上传\n2. 文件名是否正确\n3. 是否使用了特殊字符"
+  }
+}

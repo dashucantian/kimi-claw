@@ -1,0 +1,168 @@
+/**pages/feedback/feedback.wxss**/
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A1628 0%, #1a2540 100%);
+  padding: 0 20px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部标题栏 */
+.top-bar {
+  padding: 0 20px;
+  text-align: center;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-bar-title {
+  font-size: 10px;
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(245, 241, 232, 0.15);
+  padding-bottom: 2px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* 完成头部 */
+.completion-header {
+  text-align: center;
+  padding: 20px 0 15px;
+}
+
+.completion-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.completion-title {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  color: #F5F1E8;
+  margin-bottom: 4px;
+}
+
+.completion-info {
+  display: block;
+  font-size: 13px;
+  color: rgba(245, 241, 232, 0.5);
+}
+
+/* 评分 */
+.rating-section {
+  margin-bottom: 20px;
+}
+
+.section-label {
+  display: block;
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.6);
+  margin-bottom: 12px;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.star {
+  font-size: 32px;
+  color: rgba(245, 241, 232, 0.2);
+  transition: all 0.2s;
+}
+
+.star.active {
+  color: #E8A87C;
+}
+
+.rating-text {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: #88B0A8;
+  min-height: 18px;
+}
+
+/* 反馈标签 */
+.feedback-tags-section {
+  margin-bottom: 16px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 8px 16px;
+  background: rgba(245, 241, 232, 0.05);
+  border-radius: 20px;
+  font-size: 13px;
+  color: rgba(245, 241, 232, 0.7);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.tag.selected {
+  background: rgba(107, 91, 149, 0.2);
+  border-color: #6B5B95;
+  color: #6B5B95;
+}
+
+/* 备注 */
+.notes-section {
+  margin-bottom: 20px;
+  position: relative;
+  flex: 1;
+}
+
+.notes-input {
+  width: 100%;
+  height: 70px;
+  background: rgba(245, 241, 232, 0.05);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  color: #F5F1E8;
+  box-sizing: border-box;
+  border: none;
+}
+
+.notes-input::placeholder {
+  color: rgba(245, 241, 232, 0.3);
+}
+
+.notes-count {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 11px;
+  color: rgba(245, 241, 232, 0.4);
+}
+
+/* 按钮 */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 20px;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6B5B95 0%, #4a3d6b 100%);
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #F5F1E8;
+}

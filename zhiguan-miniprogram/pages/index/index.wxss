@@ -1,0 +1,249 @@
+/**pages/index/index.wxss**/
+:root {
+  --deep-space: #0A1628;
+  --dawn-purple: #6B5B95;
+  --serene-teal: #88B0A8;
+  --warm-moon: #F5F1E8;
+}
+
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A1628 0%, #1a2540 100%);
+  padding: 0 20px 30px;
+  box-sizing: border-box;
+}
+
+.status-bar {
+  width: 100%;
+}
+
+/* 头部 */
+.header {
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
+.greeting {
+  display: block;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--warm-moon);
+  margin-bottom: 6px;
+}
+
+.sub-greeting {
+  display: block;
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.5);
+}
+
+/* 统计卡片 */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  flex: 1;
+  background: rgba(245, 241, 232, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(107, 91, 149, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.stat-number {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--serene-teal);
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 4px;
+}
+
+/* 主操作区 */
+.main-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+/* 呼吸圆环容器 */
+.breath-ring-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 呼吸圆环 */
+.breath-ring {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, 
+    rgba(107, 91, 149, 0.6) 0%, 
+    rgba(136, 176, 168, 0.4) 50%,
+    rgba(107, 91, 149, 0.6) 100%);
+  animation: breathe-ring 8s ease-in-out infinite;
+  box-shadow: 
+    0 0 60px rgba(107, 91, 149, 0.4),
+    0 0 100px rgba(136, 176, 168, 0.2),
+    inset 0 0 40px rgba(245, 241, 232, 0.1);
+}
+
+.breath-ring::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,
+    rgba(136, 176, 168, 0.3) 0%,
+    rgba(107, 91, 149, 0.2) 100%);
+  animation: breathe-ring-inner 8s ease-in-out infinite;
+}
+
+@keyframes breathe-ring {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+    box-shadow: 
+      0 0 40px rgba(107, 91, 149, 0.3),
+      0 0 80px rgba(136, 176, 168, 0.15),
+      inset 0 0 30px rgba(245, 241, 232, 0.05);
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+    box-shadow: 
+      0 0 80px rgba(107, 91, 149, 0.6),
+      0 0 120px rgba(136, 176, 168, 0.35),
+      inset 0 0 50px rgba(245, 241, 232, 0.15);
+  }
+}
+
+@keyframes breathe-ring-inner {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* 玻璃态背景 */
+.glass-center {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(10, 22, 40, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 241, 232, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.main-btn-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--warm-moon);
+}
+
+.main-btn-sub {
+  font-size: 12px;
+  color: rgba(245, 241, 232, 0.6);
+  margin-top: 4px;
+}
+
+.current-setting {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.5);
+}
+
+/* 选择器标题 */
+.section-title {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.6);
+  margin-bottom: 12px;
+}
+
+/* 时长选择 */
+.duration-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.duration-option {
+  flex: 1;
+  padding: 12px 8px;
+  background: rgba(245, 241, 232, 0.05);
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.duration-option.active {
+  background: rgba(107, 91, 149, 0.2);
+  border-color: var(--dawn-purple);
+  transform: scale(1.05);
+}
+
+.duration-num {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--warm-moon);
+}
+
+.duration-unit {
+  display: block;
+  font-size: 11px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 2px;
+}
+
+/* 模式选择 */
+.mode-selector {
+  display: flex;
+  background: rgba(245, 241, 232, 0.05);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.mode-option {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.6);
+  transition: all 0.3s;
+}
+
+.mode-option.active {
+  background: var(--dawn-purple);
+  color: var(--warm-moon);
+}

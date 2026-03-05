@@ -1,0 +1,270 @@
+/**pages/index/index.wxss**/
+/* ===== CSS Variables - ZenFlow Color System ===== */
+:root {
+  --deep-space: #0A1628;
+  --dawn-purple: #6B5B95;
+  --serene-teal: #88B0A8;
+  --warm-moon: #F5F1E8;
+  --accent-orange: #E8A87C;
+  
+  /* Glass morphism */
+  --glass-bg: rgba(245, 241, 232, 0.08);
+  --glass-border: rgba(245, 241, 232, 0.1);
+  --shadow-glow: rgba(107, 91, 149, 0.3);
+  --shadow-soft: rgba(0, 0, 0, 0.2);
+}
+
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A1628 0%, #1a2540 100%);
+  padding: 0 20px 30px;
+  box-sizing: border-box;
+}
+
+.status-bar {
+  width: 100%;
+}
+
+/* 头部 */
+.header {
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
+.greeting {
+  display: block;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--warm-moon);
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+
+.sub-greeting {
+  display: block;
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 4px;
+}
+
+/* 统计卡片 */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  flex: 1;
+  background: var(--glass-bg);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+}
+
+.stat-number {
+  display: block;
+  font-family: 'SF Mono', monospace;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--serene-teal);
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+/* 主操作区 */
+.main-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+/* ===== Breath Ring - ZenFlow Style ===== */
+.breath-ring-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 30px;
+  position: relative;
+}
+
+.breath-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  animation: breathPulse 8s ease-in-out infinite;
+}
+
+.breath-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--dawn-purple), var(--serene-teal));
+  z-index: -1;
+  opacity: 0.8;
+  filter: blur(8px);
+  animation: breathGlow 8s ease-in-out infinite;
+}
+
+.breath-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.breath-text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  color: var(--warm-moon);
+}
+
+.breath-hint {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 8px;
+  letter-spacing: 2px;
+  color: rgba(245, 241, 232, 0.7);
+}
+
+/* Particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--dawn-purple);
+  opacity: 0.6;
+  animation: particleFloat 6s ease-in-out infinite;
+}
+
+@keyframes breathPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes breathGlow {
+  0%, 100% { opacity: 0.5; filter: blur(8px); }
+  50% { opacity: 0.9; filter: blur(16px); }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translate(0, 0); opacity: 0.6; }
+  25% { transform: translate(10px, -15px); opacity: 0.8; }
+  50% { transform: translate(-5px, -10px); opacity: 0.4; }
+  75% { transform: translate(5px, -20px); opacity: 0.7; }
+}
+
+/* 暂停状态 */
+.breath-ring.paused {
+  animation: none;
+}
+
+.breath-ring.paused::before {
+  animation: none;
+  opacity: 0.5;
+}
+
+.current-setting {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 2px;
+  margin-top: 16px;
+}
+
+/* 选择器标题 */
+.section-title {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.6);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--warm-moon));
+  opacity: 0.3;
+}
+
+/* 时长选择 */
+.duration-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.duration-option {
+  flex: 1;
+  padding: 12px 8px;
+  background: var(--glass-bg);
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.duration-option.active {
+  background: rgba(107, 91, 149, 0.2);
+  border-color: var(--dawn-purple);
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(107, 91, 149, 0.2);
+}
+
+.duration-num {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--warm-moon);
+}
+
+.duration-unit {
+  display: block;
+  font-size: 11px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 2px;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

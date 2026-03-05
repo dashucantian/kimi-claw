@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>止观 - 每日冥想</title>
+    <style>
+        /* ===== CSS Variables - ZenFlow Color System ===== */
+        :root {
+            --deep-space: #0A1628;
+            --dawn-purple: #6B5B95;
+            --serene-teal: #88B0A8;
+            --warm-moon: #F5F1E8;
+            --accent-orange: #E8A87C;
+            
+            /* Glass morphism */
+            --glass-bg: rgba(245, 241, 232, 0.08);
+            --glass-border: rgba(245, 241, 232, 0.1);
+            --shadow-glow: rgba(107, 91, 149, 0.3);
+            --shadow-soft: rgba(0, 0, 0, 0.2);
+            
+            /* Fonts */
+            --font-display: 'Noto Serif SC', serif;
+            --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', monospace;
+        }
+
+        /* ===== Base Reset ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--deep-space);
+            color: var(--warm-moon);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== Device Frame ===== */
+        .device-frame {
+            max-width: 414px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--deep-space);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== Ambient Background ===== */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse at 30% 20%,
+                rgba(107, 91, 149, 0.15) 0%,
+                transparent 50%
+            );
+            animation: ambientFloat 20s ease-in-out infinite;
+        }
+
+        .ambient-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            mix-blend-mode: overlay;
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(5%, 5%) rotate(5deg); }
+            66% { transform: translate(-5%, 3%) rotate(-3deg); }
+        }
+
+        /* ===== Page Container ===== */
+        .page-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* ===== Status Bar ===== */
+        .status-bar {
+            width: 100%;
+            height: 44px;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            margin-bottom: 30px;
+            padding-top: 10px;
+        }
+
+        .greeting {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--warm-moon);
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .sub-greeting {
+            display: block;
+            font-size: 14px;
+            color: rgba(245, 241, 232, 0.5);
+            letter-spacing: 4px;
+        }
+
+        /* ===== Stats Row ===== */
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 32px;
+            font-weight: 300;
+            color: var(--serene-teal);
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 12px;
+            color: rgba(245, 241, 232, 0.5);
+            margin-top: 4px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== Main Action Area ===== */
+        .main-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        /* ===== Breath Ring - ZenFlow Style ===== */
+        .breath-ring-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0 30px;
+            position: relative;
+        }
+
+        .breath-ring {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            animation: breathPulse 8s ease-in-out infinite;
+        }
+
+        .breath-ring::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--dawn-purple), var(--serene-teal));
+            z-index: -1;
+            opacity: 0.8;
+            filter: blur(8px);
+            animation: breathGlow 8s ease-in-out infinite;
+        }
+
+        .breath-ring-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .breath-ring-inner:hover {
+            background: rgba(245, 241, 232, 0.12);
+            border-color: rgba(245, 241, 232, 0.2);
+        }
+
+        .breath-text {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: var(--warm-moon);
+        }
+
+        .breath-hint {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 8px;
+            letter-spacing: 2px;
+            color: rgba(245, 241, 232, 0.7);
+        }
+
+        /* Particles */
+        .particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--dawn-purple);
+            opacity: 0.6;
+            animation: particleFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes breathPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        @keyframes breathGlow {
+            0%, 100% { opacity: 0.5; filter: blur(8px); }
+            50% { opacity: 0.9; filter: blur(16px); }
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translate(0, 0); opacity: 0.6; }
+            25% { transform: translate(10px, -15px); opacity: 0.8; }
+            50% { transform: translate(-5px, -10px); opacity: 0.4; }
+            75% { transform: translate(5px, -20px); opacity: 0.7; }
+        }
+
+        /* Breathing state */
+        .breath-ring.breathing {
+            animation: breathPulseActive 8s ease-in-out infinite;
+        }
+
+        .breath-ring.breathing::before {
+            animation: breathGlowActive 8s ease-in-out infinite;
+        }
+
+        @keyframes breathPulseActive {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes breathGlowActive {
+            0%, 100% { opacity: 0.6; filter: blur(10px); }
+            50% { opacity: 1; filter: blur(20px); }
+        }
+
+        /* Current Setting Text */
+        .current-setting {
+            font-size: 14px;
+            color: rgba(245, 241, 232, 0.5);
+            letter-spacing: 2px;
+            margin-top: 16px;
+        }
+
+        /* ===== Section Title ===== */
+        .section-title {
+            font-size: 14px;
+            color: rgba(245, 241, 232, 0.6);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 16px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--warm-moon));
+            opacity: 0.3;
+        }
+
+        /* ===== Duration Selector ===== */
+        .duration-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .duration-option {
+            flex: 1;
+            padding: 12px 8px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .duration-option.active {
+            background: rgba(107, 91, 149, 0.2);
+            border-color: var(--dawn-purple);
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(107, 91, 149, 0.2);
+        }
+
+        .duration-num {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--warm-moon);
+        }
+
+        .duration-unit {
+            display: block;
+            font-size: 11px;
+            color: rgba(245, 241, 232, 0.5);
+            margin-top: 2px;
+        }
+
+        /* ===== Mode Selector ===== */
+        .mode-selector {
+            display: flex;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .mode-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 14px;
+            color: rgba(245, 241, 232, 0.6);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .mode-option.active {
+            background: linear-gradient(135deg, var(--dawn-purple), var(--serene-teal));
+            color: var(--warm-moon);
+            box-shadow: 0 4px 15px rgba(107, 91, 149, 0.3);
+        }
+
+        /* ===== Sound Options ===== */
+        .sound-section {
+            margin-top: 24px;
+        }
+
+        .sound-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sound-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .sound-option:hover,
+        .sound-option.active {
+            background: rgba(107, 91, 149, 0.2);
+            border-color: var(--dawn-purple);
+            transform: translateY(-2px);
+        }
+
+        .sound-icon {
+            font-size: 24px;
+        }
+
+        .sound-label {
+            font-size: 12px;
+            opacity: 0.8;
+            color: var(--warm-moon);
+        }
+
+        /* ===== Practice Page ===== */
+        .practice-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--deep-space);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .practice-page.active {
+            display: flex;
+            animation: pageEnter 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pageEnter {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .practice-header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--warm-moon);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(245, 241, 232, 0.15);
+        }
+
+        .practice-ring {
+            width: 280px;
+            height: 280px;
+        }
+
+        .practice-ring .breath-ring-inner {
+            background: radial-gradient(
+                circle at center,
+                rgba(107, 91, 149, 0.2) 0%,
+                transparent 70%
+            );
+        }
+
+        .breath-guide-text {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 12px;
+            animation: breathText 8s ease-in-out infinite;
+        }
+
+        @keyframes breathText {
+            0%, 10% { opacity: 1; }
+            15%, 35% { opacity: 0.3; }
+            40%, 60% { opacity: 1; }
+            65%, 90% { opacity: 0.3; }
+            95%, 100% { opacity: 1; }
+        }
+
+        .timer-display {
+            margin-top: 48px;
+            text-align: center;
+        }
+
+        .timer-current {
+            font-family: var(--font-mono);
+            font-size: 56px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: var(--warm-moon);
+        }
+
+        .timer-progress {
+            width: 200px;
+            height: 2px;
+            background: rgba(245, 241, 232, 0.2);
+            margin: 16px auto;
+            border-radius: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--dawn-purple), var(--serene-teal));
+            border-radius: 1px;
+            transition: width 1s linear;
+        }
+
+        .timer-total {
+            font-size: 14px;
+            opacity: 0.6;
+            letter-spacing: 2px;
+        }
+
+        .practice-controls {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--warm-moon);
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(245, 241, 232, 0.15);
+            transform: scale(1.05);
+        }
+
+        .control-btn.primary {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--dawn-purple), var(--serene-teal));
+            border: none;
+            font-size: 28px;
+            box-shadow: 0 4px 20px var(--shadow-glow);
+        }
+
+        .control-btn.primary:hover {
+            box-shadow: 0 6px 30px rgba(107, 91, 149, 0.5);
+        }
+
+        /* ===== Completion Modal ===== */
+        .completion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.95);
+            z-index: 200;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .completion-modal.active {
+            display: flex;
+            animation: modalEnter 400ms ease;
+        }
+
+        @keyframes modalEnter {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .completion-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+
+        .completion-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: 4px;
+        }
+
+        .completion-stats {
+            display: flex;
+            gap: 32px;
+            margin: 24px 0;
+        }
+
+        .completion-stat {
+            text-align: center;
+        }
+
+        .completion-stat-value {
+            font-family: var(--font-mono);
+            font-size: 36px;
+            color: var(--serene-teal);
+        }
+
+        .completion-stat-label {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        .completion-btn {
+            margin-top: 32px;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, var(--dawn-purple), var(--serene-teal));
+            border: none;
+            border-radius: 28px;
+            color: var(--warm-moon);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(107, 91, 149, 0.3);
+        }
+
+        .completion-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(107, 91, 149, 0.5);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 480px) {
+            .device-frame {
+                max-width: 100%;
+            }
+        }
+
+        /* Reduce motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <!-- Ambient Background -->
+        <div class="ambient-bg"></div>
+
+        <!-- Main Page -->
+        <div class="page-container" id="mainPage">
+            <div class="status-bar"></div>
+            
+            <!-- Header -->
+            <div class="header">
+                <span class="greeting" id="greetingText">早安，行者</span>
+                <span class="sub-greeting">每日止观，回归当下</span>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-number" id="todayCount">0</span>
+                    <span class="stat-label">今日练习</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="streakCount">7</span>
+                    <span class="stat-label">连续天数</span>
+                </div>
+            </div>
+
+            <!-- Main Action -->
+            <div class="main-action">
+                <!-- Breath Ring -->
+                <div class="breath-ring-container">
+                    <div class="breath-ring" id="breathRing" onclick="startPractice()">
+                        <div class="breath-ring-inner">
+                            <div class="breath-text">止观</div>
+                            <div class="breath-hint">点击开始</div>
+                        </div>
+                        <div class="particles">
+                            <div class="particle" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+                            <div class="particle" style="top: 30%; left: 80%; animation-delay: 1s;"></div>
+                            <div class="particle" style="top: 70%; left: 15%; animation-delay: 2s;"></div>
+                            <div class="particle" style="top: 80%; left: 75%; animation-delay: 3s;"></div>
+                            <div class="particle" style="top: 50%; left: 90%; animation-delay: 1.5s;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="current-setting" id="currentSetting">3分钟 · 引导</span>
+            </div>
+
+            <!-- Duration Selector -->
+            <div class="section-title">选择时长</div>
+            <div class="duration-selector">
+                <div class="duration-option active" data-duration="3" onclick="selectDuration(3)">
+                    <span class="duration-num">3</span>
+                    <span class="duration-unit">分钟</span>
+                </div>
+                <div class="duration-option" data-duration="5" onclick="selectDuration(5)">
+                    <span class="duration-num">5</span>
+                    <span class="duration-unit">分钟</span>
+                </div>
+                <div class="duration-option" data-duration="15" onclick="selectDuration(15)">
+                    <span class="duration-num">15</span>
+                    <span class="duration-unit">分钟</span>
+                </div>
+            </div>
+
+            <!-- Mode Selector -->
+            <div class="section-title">练习模式</div>
+            <div class="mode-selector">
+                <div class="mode-option active" data-mode="guided" onclick="selectMode('guided')">引导</div>
+                <div class="mode-option" data-mode="silent" onclick="selectMode('silent')">自主</div>
+            </div>
+
+            <!-- Sound Options -->
+            <div class="sound-section">
+                <div class="section-title">背景音效</div>
+                <div class="sound-options">
+                    <div class="sound-option active" data-sound="windchime" onclick="selectSound('windchime')">
+                        <span class="sound-icon">🎐</span>
+                        <span class="sound-label">风铃</span>
+                    </div>
+                    <div class="sound-option" data-sound="waterdrop" onclick="selectSound('waterdrop')">
+                        <span class="sound-icon">💧</span>
+                        <span class="sound-label">水滴</span>
+                    </div>
+                    <div class="sound-option" data-sound="none" onclick="selectSound('none')">
+                        <span class="sound-icon">🔇</span>
+                        <span class="sound-label">静音</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice Page -->
+        <div class="practice-page" id="practicePage">
+            <div class="practice-header">
+                <button class="back-btn" onclick="endPractice()">←</button>
+            </div>
+
+            <div class="breath-ring practice-ring" id="practiceRing">
+                <div class="breath-ring-inner">
+                    <div class="breath-guide-text" id="breathGuide">吸气</div>
+                </div>
+                <div class="particles">
+                    <div class="particle" style="top: 5%; left: 30%; animation-delay: 0s;"></div>
+                    <div class="particle" style="top: 20%; left: 70%; animation-delay: 0.5s;"></div>
+                    <div class="particle" style="top: 50%; left: 85%; animation-delay: 1s;"></div>
+                    <div class="particle" style="top: 80%; left: 70%; animation-delay: 1.5s;"></div>
+                    <div class="particle" style="top: 85%; left: 30%; animation-delay: 2s;"></div>
+                    <div class="particle" style="top: 50%; left: 10%; animation-delay: 2.5s;"></div>
+                </div>
+            </div>
+
+            <div class="timer-display">
+                <div class="timer-current" id="timerDisplay">03:00</div>
+                <div class="timer-progress">
+                    <div class="timer-progress-fill" id="timerProgress"></div>
+                </div>
+                <div class="timer-total" id="timerTotal">3分钟</div>
+            </div>
+
+            <div class="practice-controls">
+                <button class="control-btn" onclick="endPractice()">⏹</button>
+                <button class="control-btn primary" id="playPauseBtn" onclick="togglePause()">⏸</button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="completion-modal" id="completionModal">
+            <div class="completion-icon">🧘</div>
+            <h2 class="completion-title">练习完成</h2>
+            <p style="opacity: 0.7; text-align: center;">心若止水，万物皆映</p>
+            
+            <div class="completion-stats">
+                <div class="completion-stat">
+                    <div class="completion-stat-value" id="completionDuration">3</div>
+                    <div class="completion-stat-label">分钟</div>
+                </div>
+                <div class="completion-stat">
+                    <div class="completion-stat-value" id="completionStreak">7</div>
+                    <div class="completion-stat-label">连续天数</div>
+                </div>
+            </div>
+
+            <button class="completion-btn" onclick="closeCompletion()">完成</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== State Management =====
+        const state = {
+            duration: 3,
+            mode: 'guided',
+            sound: 'windchime',
+            isPracticing: false,
+            isPaused: false,
+            timeRemaining: 180,
+            todayCount: 0,
+            streak: 7,
+            timerInterval: null,
+            breathInterval: null,
+            audio: null
+        };
+
+        // ===== Audio Configuration =====
+        const audioFiles = {
+            windchime: '/root/.openclaw/workspace/audio/windchime-15s.mp3',
+            waterdrop: '/root/.openclaw/workspace/audio/waterdrop-15s.mp3'
+        };
+
+        // ===== Greeting =====
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById('greetingText');
+            let greeting = '早安';
+            if (hour >= 12 && hour < 18) greeting = '午安';
+            else if (hour >= 18) greeting = '晚安';
+            greetingEl.textContent = `${greeting}，行者`;
+        }
+
+        // ===== Duration Selection =====
+        function selectDuration(minutes) {
+            state.duration = minutes;
+            document.querySelectorAll('.duration-option').forEach(el => {
+                el.classList.remove('active');
+                if (parseInt(el.dataset.duration) === minutes) {
+                    el.classList.add('active');
+                }
+            });
+            updateCurrentSetting();
+        }
+
+        // ===== Mode Selection =====
+        function selectMode(mode) {
+            state.mode = mode;
+            document.querySelectorAll('.mode-option').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.mode === mode) {
+                    el.classList.add('active');
+                }
+            });
+            updateCurrentSetting();
+        }
+
+        // ===== Sound Selection =====
+        function selectSound(sound) {
+            state.sound = sound;
+            document.querySelectorAll('.sound-option').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.sound === sound) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // ===== Update Current Setting Display =====
+        function updateCurrentSetting() {
+            const modeText = state.mode === 'guided' ? '引导' : '自主';
+            document.getElementById('currentSetting').textContent = `${state.duration}分钟 · ${modeText}`;
+        }
+
+        // ===== Audio Playback =====
+        function playAudio() {
+            if (state.sound === 'none') return;
+            
+            // Stop any existing audio
+            if (state.audio) {
+                state.audio.pause();
+                state.audio = null;
+            }
+
+            // Create new audio element
+            const audioPath = audioFiles[state.sound];
+            if (audioPath) {
+                state.audio = new Audio(audioPath);
+                state.audio.loop = true;
+                state.audio.volume = 0.5;
+                
+                // Handle autoplay restrictions
+                const playPromise = state.audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log('Audio playback failed:', error);
+                    });
+                }
+            }
+        }
+
+        function stopAudio() {
+            if (state.audio) {
+                state.audio.pause();
+                state.audio.currentTime = 0;
+                state.audio = null;
+            }
+        }
+
+        function pauseAudio() {
+            if (state.audio) {
+                state.audio.pause();
+            }
+        }
+
+        function resumeAudio() {
+            if (state.audio && state.isPracticing && !state.isPaused) {
+                state.audio.play().catch(() => {});
+            }
+        }
+
+        // ===== Practice Start =====
+        function startPractice() {
+            state.isPracticing = true;
+            state.isPaused = false;
+            state.timeRemaining = state.duration * 60;
+            
+            // Update practice page
+            document.getElementById('timerTotal').textContent = `${state.duration}分钟`;
+            updateTimerDisplay();
+            
+            // Show practice page
+            document.getElementById('practicePage').classList.add('active');
+            
+            // Start breathing animation
+            document.getElementById('practiceRing').classList.add('breathing');
+            startBreathGuide();
+            
+            // Start timer
+            startTimer();
+            
+            // Play audio
+            playAudio();
+            
+            // Update play button
+            document.getElementById('playPauseBtn').textContent = '⏸';
+        }
+
+        // ===== Timer Functions =====
+        function startTimer() {
+            const totalTime = state.duration * 60;
+            
+            state.timerInterval = setInterval(() => {
+                if (!state.isPaused) {
+                    state.timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgressBar(totalTime);
+                    
+                    if (state.timeRemaining <= 0) {
+                        completePractice();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeRemaining / 60);
+            const seconds = state.timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateProgressBar(totalTime) {
+            const progress = ((totalTime - state.timeRemaining) / totalTime) * 100;
+            document.getElementById('timerProgress').style.width = `${progress}%`;
+        }
+
+        // ===== Breath Guide Animation =====
+        function startBreathGuide() {
+            const phases = ['吸气', '保持', '呼气', '保持'];
+            const durations = [4000, 2000, 6000, 2000]; // milliseconds
+            let currentPhase = 0;
+            let phaseStartTime = Date.now();
+            
+            const guideEl = document.getElementById('breathGuide');
+            
+            state.breathInterval = setInterval(() => {
+                if (!state.isPaused) {
+                    const elapsed = Date.now() - phaseStartTime;
+                    
+                    if (elapsed >= durations[currentPhase]) {
+                        currentPhase = (currentPhase + 1) % phases.length;
+                        phaseStartTime = Date.now();
+                        guideEl.textContent = phases[currentPhase];
+                    }
+                }
+            }, 100);
+        }
+
+        // ===== Pause/Resume =====
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            const btn = document.getElementById('playPauseBtn');
+            
+            if (state.isPaused) {
+                btn.textContent = '▶';
+                document.getElementById('practiceRing').classList.remove('breathing');
+                pauseAudio();
+            } else {
+                btn.textContent = '⏸';
+                document.getElementById('practiceRing').classList.add('breathing');
+                resumeAudio();
+            }
+        }
+
+        // ===== End Practice =====
+        function endPractice() {
+            // Clear intervals
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+            if (state.breathInterval) {
+                clearInterval(state.breathInterval);
+                state.breathInterval = null;
+            }
+            
+            // Stop audio
+            stopAudio();
+            
+            // Reset state
+            state.isPracticing = false;
+            state.isPaused = false;
+            
+            // Hide practice page
+            document.getElementById('practicePage').classList.remove('active');
+            document.getElementById('practiceRing').classList.remove('breathing');
+        }
+
+        // ===== Complete Practice =====
+        function completePractice() {
+            // Clear intervals
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+            if (state.breathInterval) {
+                clearInterval(state.breathInterval);
+                state.breathInterval = null;
+            }
+            
+            // Stop audio
+            stopAudio();
+            
+            // Update stats
+            state.todayCount++;
+            document.getElementById('todayCount').textContent = state.todayCount;
+            
+            // Update completion modal
+            document.getElementById('completionDuration').textContent = state.duration;
+            document.getElementById('completionStreak').textContent = state.streak;
+            
+            // Show completion modal
+            document.getElementById('completionModal').classList.add('active');
+            
+            // Reset state
+            state.isPracticing = false;
+            state.isPaused = false;
+            
+            // Hide practice page
+            document.getElementById('practicePage').classList.remove('active');
+            document.getElementById('practiceRing').classList.remove('breathing');
+        }
+
+        // ===== Close Completion =====
+        function closeCompletion() {
+            document.getElementById('completionModal').classList.remove('active');
+        }
+
+        // ===== Initialize =====
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGreeting();
+            updateCurrentSetting();
+        });
+    </script>
+</body>
+</html>

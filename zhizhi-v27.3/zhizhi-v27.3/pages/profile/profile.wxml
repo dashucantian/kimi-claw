@@ -1,0 +1,71 @@
+/**pages/profile/profile.wxml**/
+<view class="page-container">
+  <!-- 顶部标题栏 -->
+  <view class="top-bar">
+    <text class="top-bar-title">止止 — 数字洪流中的心智锚点</text>
+  </view>
+  
+  <!-- 用户信息 -->
+  <view class="profile-header">
+    <view class="avatar">🧘</view>
+    <text class="profile-name">修行者</text>
+    <text class="profile-join">joined {{joinDate}}</text>
+  </view>
+
+  <!-- 设置列表 -->
+  <view class="settings-list">
+    <view class="setting-item" bindtap="setReminder">
+      <view class="setting-icon">🔔</view>
+      <view class="setting-content">
+        <text class="setting-title">每日提醒</text>
+        <text class="setting-subtitle">{{reminderTime}}</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
+
+    <view class="setting-item" bindtap="selectSound">
+      <view class="setting-icon">🎵</view>
+      <view class="setting-content">
+        <text class="setting-title">默认音效</text>
+        <text class="setting-subtitle">{{defaultSound}}</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
+
+    <view class="setting-item">
+      <view class="setting-icon">🌙</view>
+      <view class="setting-content">
+        <text class="setting-title">深色模式</text>
+        <text class="setting-subtitle">跟随系统</text>
+      </view>
+      <switch class="setting-switch" checked="{{darkMode}}" bindchange="toggleDarkMode" color="#4a9eff"></switch>
+    </view>
+
+    <view class="setting-item" bindtap="showGuide">
+      <view class="setting-icon">📖</view>
+      <view class="setting-content">
+        <text class="setting-title">使用指南</text>
+        <text class="setting-subtitle">了解止止练习方法</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
+
+    <view class="setting-item" bindtap="feedback">
+      <view class="setting-icon">💬</view>
+      <view class="setting-content">
+        <text class="setting-title">反馈建议</text>
+        <text class="setting-subtitle">帮助我们做得更好</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
+
+    <view class="setting-item" bindtap="about">
+      <view class="setting-icon">ℹ️</view>
+      <view class="setting-content">
+        <text class="setting-title">关于止止</text>
+        <text class="setting-subtitle">版本 {{version}}</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
+  </view>
+</view>

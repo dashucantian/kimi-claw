@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#FFA500" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FF6B35" stop-opacity="0.1"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="1200" height="800" fill="#0a0a1a"/>
+  
+  <!-- 标题 -->
+  <text x="600" y="50" text-anchor="middle" fill="#fff" font-size="36" font-weight="bold">止观训练五阶段</text>
+  <text x="600" y="85" text-anchor="middle" fill="#888" font-size="16">从安住到日用 · 螺旋上升的修行路径</text>
+  
+  <!-- 中心光球 -->
+  <circle cx="600" cy="400" r="70" fill="url(#centerGlow)" filter="url(#glow)"/>
+  <circle cx="600" cy="400" r="50" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.5"/>
+  <text x="600" y="395" text-anchor="middle" fill="#fff" font-size="28" font-weight="bold">止观</text>
+  <text x="600" y="415" text-anchor="middle" fill="#aaa" font-size="12">定慧等持</text>
+  
+  <!-- 阶段1: 安住 (上) -->
+  <g>
+    <line x1="600" y1="400" x2="600" y2="180" stroke="#4ECDC4" stroke-width="2" opacity="0.4"/>
+    <circle cx="600" cy="140" r="55" fill="#1a1a2e" stroke="#4ECDC4" stroke-width="3"/>
+    <circle cx="600" cy="140" r="45" fill="none" stroke="#4ECDC4" stroke-width="1" opacity="0.3"/>
+    <text x="600" y="130" text-anchor="middle" fill="#4ECDC4" font-size="22" font-weight="bold">安住</text>
+    <text x="600" y="155" text-anchor="middle" fill="#fff" font-size="14">阶段 1</text>
+    <!-- 信息卡片 -->
+    <rect x="680" y="100" width="140" height="80" rx="8" fill="#1a1a2e" stroke="#4ECDC4" stroke-width="1" opacity="0.8"/>
+    <text x="700" y="125" fill="#888" font-size="11">对治：止散乱</text>
+    <text x="700" y="145" fill="#ccc" font-size="12">专注锚点</text>
+    <text x="700" y="165" fill="#4ECDC4" font-size="13" font-weight="bold">心一境性</text>
+  </g>
+  
+  <!-- 阶段2: 觉察 (右上) -->
+  <g>
+    <line x1="600" y1="400" x2="850" y2="260" stroke="#45B7D1" stroke-width="2" opacity="0.4"/>
+    <circle cx="890" cy="230" r="55" fill="#1a1a2e" stroke="#45B7D1" stroke-width="3"/>
+    <circle cx="890" cy="230" r="45" fill="none" stroke="#45B7D1" stroke-width="1" opacity="0.3"/>
+    <text x="890" y="220" text-anchor="middle" fill="#45B7D1" font-size="22" font-weight="bold">觉察</text>
+    <text x="890" y="245" text-anchor="middle" fill="#fff" font-size="14">阶段 2</text>
+    <!-- 信息卡片 -->
+    <rect x="960" y="190" width="140" height="80" rx="8" fill="#1a1a2e" stroke="#45B7D1" stroke-width="1" opacity="0.8"/>
+    <text x="980" y="215" fill="#888" font-size="11">对治：破执着</text>
+    <text x="980" y="235" fill="#ccc" font-size="12">双照虚实</text>
+    <text x="980" y="255" fill="#45B7D1" font-size="13" font-weight="bold">照见并存</text>
+  </g>
+  
+  <!-- 阶段3: 调伏 (右下) -->
+  <g>
+    <line x1="600" y1="400" x2="850" y2="540" stroke="#96CEB4" stroke-width="2" opacity="0.4"/>
+    <circle cx="890" cy="570" r="55" fill="#1a1a2e" stroke="#96CEB4" stroke-width="3"/>
+    <circle cx="890" cy="570" r="45" fill="none" stroke="#96CEB4" stroke-width="1" opacity="0.3"/>
+    <text x="890" y="560" text-anchor="middle" fill="#96CEB4" font-size="22" font-weight="bold">调伏</text>
+    <text x="890" y="585" text-anchor="middle" fill="#fff" font-size="14">阶段 3</text>
+    <!-- 信息卡片 -->
+    <rect x="960" y="530" width="140" height="80" rx="8" fill="#1a1a2e" stroke="#96CEB4" stroke-width="1" opacity="0.8"/>
+    <text x="980" y="555" fill="#888" font-size="11">对治：得自在</text>
+    <text x="980" y="575" fill="#ccc" font-size="12">主动调节</text>
+    <text x="980" y="595" fill="#96CEB4" font-size="13" font-weight="bold">止观双运</text>
+  </g>
+  
+  <!-- 阶段4: 定慧 (左下) -->
+  <g>
+    <line x1="600" y1="400" x2="350" y2="540" stroke="#FFEAA7" stroke-width="2" opacity="0.4"/>
+    <circle cx="310" cy="570" r="55" fill="#1a1a2e" stroke="#FFEAA7" stroke-width="3"/>
+    <circle cx="310" cy="570" r="45" fill="none" stroke="#FFEAA7" stroke-width="1" opacity="0.3"/>
+    <text x="310" y="560" text-anchor="middle" fill="#FFEAA7" font-size="22" font-weight="bold">定慧</text>
+    <text x="310" y="585" text-anchor="middle" fill="#fff" font-size="14">阶段 4</text>
+    <!-- 信息卡片 -->
+    <rect x="100" y="530" width="140" height="80" rx="8" fill="#1a1a2e" stroke="#FFEAA7" stroke-width="1" opacity="0.8"/>
+    <text x="120" y="555" fill="#888" font-size="11">对治：开智慧</text>
+    <text x="120" y="575" fill="#ccc" font-size="12">定中思维</text>
+    <text x="120" y="595" fill="#FFEAA7" font-size="13" font-weight="bold">定慧等持</text>
+  </g>
+  
+  <!-- 阶段5: 日用 (左上) -->
+  <g>
+    <line x1="600" y1="400" x2="350" y2="260" stroke="#DDA0DD" stroke-width="2" opacity="0.4"/>
+    <circle cx="310" cy="230" r="55" fill="#1a1a2e" stroke="#DDA0DD" stroke-width="3"/>
+    <circle cx="310" cy="230" r="45" fill="none" stroke="#DDA0DD" stroke-width="1" opacity="0.3"/>
+    <text x="310" y="220" text-anchor="middle" fill="#DDA0DD" font-size="22" font-weight="bold">日用</text>
+    <text x="310" y="245" text-anchor="middle" fill="#fff" font-size="14">阶段 5</text>
+    <!-- 信息卡片 -->
+    <rect x="100" y="190" width="140" height="80" rx="8" fill="#1a1a2e" stroke="#DDA0DD" stroke-width="1" opacity="0.8"/>
+    <text x="120" y="215" fill="#888" font-size="11">对治：成习惯</text>
+    <text x="120" y="235" fill="#ccc" font-size="12">自主进退</text>
+    <text x="120" y="255" fill="#DDA0DD" font-size="13" font-weight="bold">功夫上身</text>
+  </g>
+  
+  <!-- 螺旋箭头 -->
+  <path d="M 600 85 Q 750 140 890 175" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="8,4" opacity="0.6" marker-end="url(#arrowhead)"/>
+  <path d="M 945 230 Q 980 350 945 515" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+  <path d="M 890 625 Q 750 660 600 715" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+  <path d="M 310 625 Q 170 660 255 515" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+  <path d="M 255 285 Q 170 140 555 85" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+  
+  <!-- 箭头标记 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#667eea"/>
+    </marker>
+  </defs>
+  
+  <!-- 底部说明 -->
+  <text x="600" y="760" text-anchor="middle" fill="#666" font-size="14">由定发慧 → 定慧等持 → 功夫上身</text>
+</svg>

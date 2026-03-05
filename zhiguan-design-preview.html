@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>止观AI - 设计方案预览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a15;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .phones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            justify-items: center;
+        }
+
+        /* 手机外框 */
+        .phone {
+            width: 320px;
+            height: 680px;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page-label {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #4a9eff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ========== 首页样式 ========== */
+        .home-page {
+            padding: 50px 20px 80px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .home-header {
+            margin-bottom: 30px;
+        }
+
+        .greeting {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .sub-greeting {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #4a9eff;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+
+        .main-action {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breath-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .breath-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(74,158,255,0.3);
+        }
+
+        .breath-dot.active {
+            background: #4a9eff;
+            animation: breathe-dot 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .main-btn {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(74,158,255,0.3);
+            animation: breathe-btn 3s ease-in-out infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes breathe-btn {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .main-btn-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .main-btn-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 4px;
+        }
+
+        .current-setting {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 40px;
+        }
+
+        .duration-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .duration-option {
+            flex: 1;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .duration-option.active {
+            background: rgba(74,158,255,0.15);
+            border-color: #4a9eff;
+            transform: scale(1.05);
+        }
+
+        .duration-num {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: block;
+        }
+
+        .duration-unit {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .mode-selector {
+            display: flex;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .mode-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            transition: all 0.3s;
+        }
+
+        .mode-option.active {
+            background: #4a9eff;
+            color: #fff;
+        }
+
+        /* 底部导航 */
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 28px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-item {
+            text-align: center;
+            padding: 8px 24px;
+            border-radius: 12px;
+        }
+
+        .tab-item.active {
+            background: rgba(74,158,255,0.2);
+        }
+
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .tab-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .tab-item.active .tab-text {
+            color: #4a9eff;
+        }
+
+        /* ========== 练习页样式 ========== */
+        .practice-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .practice-header {
+            display: flex;
+            align-items: center;
+            padding: 50px 20px 20px;
+        }
+
+        .back-btn {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        .practice-title {
+            flex: 1;
+            text-align: center;
+        }
+
+        .practice-title-main {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .practice-title-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 2px;
+        }
+
+        .breath-bg {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74,158,255,0.15) 0%, transparent 70%);
+            animation: breathe-bg 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe-bg {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+        }
+
+        .timer-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .timer-ring {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            border: 2px solid rgba(74,158,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timer-ring::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: #4a9eff;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .timer {
+            font-size: 56px;
+            font-weight: 200;
+            color: #fff;
+            letter-spacing: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stage-label {
+            font-size: 18px;
+            color: #4a9eff;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .guide-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            max-width: 240px;
+            line-height: 1.6;
+            min-height: 44px;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 12px;
+            margin-top: 40px;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .progress-dot.completed {
+            background: #4a9eff;
+        }
+
+        .progress-dot.active {
+            background: #4a9eff;
+            box-shadow: 0 0 10px #4a9eff;
+        }
+
+        .practice-controls {
+            display: flex;
+            gap: 20px;
+            padding: 30px 40px 50px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            padding: 14px 36px;
+            border-radius: 24px;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .control-btn.pause {
+            background: rgba(255,193,7,0.9);
+            color: #000;
+        }
+
+        .control-btn.end {
+            background: rgba(244,67,54,0.9);
+            color: #fff;
+        }
+
+        /* ========== 记录页样式 ========== */
+        .stats-page {
+            padding: 50px 20px 80px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .overview-cards {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .overview-card {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(74,158,255,0.2) 0%, rgba(53,122,189,0.1) 100%);
+            border-radius: 16px;
+            padding: 16px 8px;
+            text-align: center;
+            border: 1px solid rgba(74,158,255,0.2);
+        }
+
+        .overview-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4a9eff;
+            display: block;
+        }
+
+        .overview-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 4px;
+        }
+
+        .calendar-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .calendar-title {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .calendar-nav {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .calendar-day-header {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            padding: 8px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            position: relative;
+        }
+
+        .calendar-day.active::after {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background: #4a9eff;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .calendar-day.today {
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .calendar-summary {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .history-section-title {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .history-date {
+            text-align: center;
+            min-width: 44px;
+        }
+
+        .history-day {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4a9eff;
+            line-height: 1;
+        }
+
+        .history-month {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-duration {
+            font-size: 15px;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .history-mode {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .history-rating {
+            color: #ffc107;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        /* ========== 我的页样式 ========== */
+        .profile-page {
+            padding: 50px 20px 80px;
+            height: 100%;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .profile-join {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .setting-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(74,158,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .setting-content {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-size: 15px;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .setting-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .setting-arrow {
+            color: rgba(255,255,255,0.3);
+            font-size: 14px;
+        }
+
+        .setting-toggle {
+            width: 48px;
+            height: 26px;
+            background: #4a9eff;
+            border-radius: 13px;
+            position: relative;
+        }
+
+        .setting-toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>止观AI 小程序设计方案</h1>
+        <p class="subtitle">主页面与次页面效果图预览</p>
+
+        <div class="phones-grid">
+            <!-- 首页 -->
+            <div class="phone">
+                <div class="page-label">首页 - 练习</div>
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="home-page">
+                        <div class="home-header">
+                            <div class="greeting">早安</div>
+                            <div class="sub-greeting">每日止观，回归当下</div>
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <span class="stat-number">0</span>
+                                <div class="stat-label">今日练习</div>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">0</span>
+                                <div class="stat-label">连续天数</div>
+                            </div>
+                        </div>
+
+                        <div class="main-action">
+                            <div class="breath-dots">
+                                <div class="breath-dot active"></div>
+                                <div class="breath-dot"></div>
+                                <div class="breath-dot"></div>
+                                <div class="breath-dot"></div>
+                                <div class="breath-dot"></div>
+                            </div>
+
+                            <div class="main-btn">
+                                <span class="main-btn-text">开始止观</span>
+                                <span class="main-btn-sub">点击开始</span>
+                            </div>
+
+                            <div class="current-setting">3分钟 · 引导</div>
+                        </div>
+
+                        <div class="duration-selector">
+                            <div class="duration-option active">
+                                <span class="duration-num">3</span>
+                                <span class="duration-unit">分钟</span>
+                            </div>
+                            <div class="duration-option">
+                                <span class="duration-num">5</span>
+                                <span class="duration-unit">分钟</span>
+                            </div>
+                            <div class="duration-option">
+                                <span class="duration-num">10</span>
+                                <span class="duration-unit">分钟</span>
+                            </div>
+                            <div class="duration-option">
+                                <span class="duration-num">20</span>
+                                <span class="duration-unit">分钟</span>
+                            </div>
+                        </div>
+
+                        <div class="mode-selector">
+                            <div class="mode-option active">引导</div>
+                            <div class="mode-option">自主</div>
+                        </div>
+                    </div>
+
+                    <div class="tab-bar">
+                        <div class="tab-item active">
+                            <div class="tab-icon">🧘</div>
+                            <div class="tab-text">练习</div>
+                        </div>
+                        <div class="tab-item">
+                            <div class="tab-icon">📊</div>
+                            <div class="tab-text">记录</div>
+                        </div>
+                        <div class="tab-item">
+                            <div class="tab-icon">👤</div>
+                            <div class="tab-text">我的</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 练习页 -->
+            <div class="phone">
+                <div class="page-label">练习页</div>
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="practice-page">
+                        <div class="breath-bg"></div>
+
+                        <div class="practice-header">
+                            <div class="back-btn">← 返回</div>
+                            <div class="practice-title">
+                                <div class="practice-title-main">3分钟止观</div>
+                                <div class="practice-title-sub">引导练习</div>
+                            </div>
+                            <div style="width: 50px;"></div>
+                        </div>
+
+                        <div class="timer-section">
+                            <div class="timer-ring">
+                                <div class="timer">03:00</div>
+                            </div>
+
+                            <div class="stage-label">调息</div>
+                            <div class="guide-text">吸气...呼气...<br>保持自然的呼吸节奏</div>
+
+                            <div class="progress-dots">
+                                <div class="progress-dot completed"></div>
+                                <div class="progress-dot active"></div>
+                                <div class="progress-dot"></div>
+                                <div class="progress-dot"></div>
+                                <div class="progress-dot"></div>
+                            </div>
+                        </div>
+
+                        <div class="practice-controls">
+                            <button class="control-btn pause">暂停</button>
+                            <button class="control-btn end">结束</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记录页 -->
+            <div class="phone">
+                <div class="page-label">记录页</div>
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="stats-page">
+                        <div class="page-header">
+                            <div class="page-title">修行记录</div>
+                            <div class="page-subtitle">见证你的成长</div>
+                        </div>
+
+                        <div class="overview-cards">
+                            <div class="overview-card">
+                                <span class="overview-number">12</span>
+                                <div class="overview-label">总次数</div>
+                            </div>
+                            <div class="overview-card">
+                                <span class="overview-number">3.5</span>
+                                <div class="overview-label">总小时</div>
+                            </div>
+                            <div class="overview-card">
+                                <span class="overview-number">7</span>
+                                <div class="overview-label">连续天</div>
+                            </div>
+                        </div>
+
+                        <div class="calendar-section">
+                            <div class="calendar-header">
+                                <span class="calendar-title">2026年2月</span>
+                                <span class="calendar-nav">← →</span>
+                            </div>
+                            <div class="calendar-grid">
+                                <div class="calendar-day-header">日</div>
+                                <div class="calendar-day-header">一</div>
+                                <div class="calendar-day-header">二</div>
+                                <div class="calendar-day-header">三</div>
+                                <div class="calendar-day-header">四</div>
+                                <div class="calendar-day-header">五</div>
+                                <div class="calendar-day-header">六</div>
+                                
+                                <div class="calendar-day"></div>
+                                <div class="calendar-day"></div>
+                                <div class="calendar-day"></div>
+                                <div class="calendar-day"></div>
+                                <div class="calendar-day"></div>
+                                <div class="calendar-day"></div>
+                                <div class="calendar-day">1</div>
+                                
+                                <div class="calendar-day active">2</div>
+                                <div class="calendar-day active">3</div>
+                                <div class="calendar-day">4</div>
+                                <div class="calendar-day active">5</div>
+                                <div class="calendar-day active">6</div>
+                                <div class="calendar-day active">7</div>
+                                <div class="calendar-day active">8</div>
+                                
+                                <div class="calendar-day">9</div>
+                                <div class="calendar-day active">10</div>
+                                <div class="calendar-day">11</div>
+                                <div class="calendar-day">12</div>
+                                <div class="calendar-day active">13</div>
+                                <div class="calendar-day">14</div>
+                                <div class="calendar-day">15</div>
+                                
+                                <div class="calendar-day">16</div>
+                                <div class="calendar-day">17</div>
+                                <div class="calendar-day active">18</div>
+                                <div class="calendar-day active">19</div>
+                                <div class="calendar-day active">20</div>
+                                <div class="calendar-day active today">21</div>
+                                <div class="calendar-day active">22</div>
+                            </div>
+                            <div class="calendar-summary">本月已练习 12 天</div>
+                        </div>
+
+                        <div class="history-section-title">最近记录</div>
+                        <div class="history-list">
+                            <div class="history-item">
+                                <div class="history-date">
+                                    <div class="history-day">22</div>
+                                    <div class="history-month">2月</div>
+                                </div>
+                                <div class="history-info">
+                                    <div class="history-duration">3分钟止观</div>
+                                    <div class="history-mode">引导练习</div>
+                                </div>
+                                <div class="history-rating">★★★★★</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-date">
+                                    <div class="history-day">21</div>
+                                    <div class="history-month">2月</div>
+                                </div>
+                                <div class="history-info">
+                                    <div class="history-duration">5分钟止观</div>
+                                    <div class="history-mode">自主练习</div>
+                                </div>
+                                <div class="history-rating">★★★★☆</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-date">
+                                    <div class="history-day">20</div>
+                                    <div class="history-month">2月</div>
+                                </div>
+                                <div class="history-info">
+                                    <div class="history-duration">10分钟止观</div>
+                                    <div class="history-mode">引导练习</div>
+                                </div>
+                                <div class="history-rating">★★★★★</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-bar">
+                        <div class="tab-item">
+                            <div class="tab-icon">🧘</div>
+                            <div class="tab-text">练习</div>
+                        </div>
+                        <div class="tab-item active">
+                            <div class="tab-icon">📊</div>
+                            <div class="tab-text">记录</div>
+                        </div>
+                        <div class="tab-item">
+                            <div class="tab-icon">👤</div>
+                            <div class="tab-text">我的</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的页 -->
+            <div class="phone">
+                <div class="page-label">我的页</div>
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="profile-page">
+                        <div class="profile-header">
+                            <div class="avatar">🧘</div>
+                            <div class="profile-name">修行者</div>
+                            <div class="profile-join">joined 2026.02</div>
+                        </div>
+
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <div class="setting-icon">🔔</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">每日提醒</div>
+                                    <div class="setting-subtitle">21:00</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-icon">🎵</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">默认音效</div>
+                                    <div class="setting-subtitle">大磬</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-icon">🌙</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">深色模式</div>
+                                    <div class="setting-subtitle">跟随系统</div>
+                                </div>
+                                <div class="setting-toggle"></div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-icon">📖</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">使用指南</div>
+                                    <div class="setting-subtitle">了解止观练习方法</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-icon">💬</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">反馈建议</div>
+                                    <div class="setting-subtitle">帮助我们做得更好</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-icon">ℹ️</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">关于止观AI</div>
+                                    <div class="setting-subtitle">版本 1.0.0</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-bar">
+                        <div class="tab-item">
+                            <div class="tab-icon">🧘</div>
+                            <div class="tab-text">练习</div>
+                        </div>
+                        <div class="tab-item">
+                            <div class="tab-icon">📊</div>
+                            <div class="tab-text">记录</div>
+                        </div>
+                        <div class="tab-item active">
+                            <div class="tab-icon">👤</div>
+                            <div class="tab-text">我的</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

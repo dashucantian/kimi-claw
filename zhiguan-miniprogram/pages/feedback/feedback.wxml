@@ -1,0 +1,76 @@
+/**pages/feedback/feedback.wxml**/
+<view class="page-container">
+  <view class="status-bar" style="height: {{statusBarHeight}}px;"></view>
+  
+  <view class="completion-header">
+    <view class="completion-icon">🎉</view>
+    <text class="completion-title">练习完成</text>
+    <text class="completion-info">{{duration}}分钟止观练习 · {{completed ? '已完成' : '已结束'}}</text>
+  </view>
+
+  <!-- 评分 -->
+  <view class="rating-section">
+    <text class="section-label">本次练习体验</text>
+    <view class="stars">
+      <text 
+        class="star {{rating >= 1 ? 'active' : ''}}"
+        bindtap="setRating"
+        data-rating="1"
+      >★</text>
+      <text 
+        class="star {{rating >= 2 ? 'active' : ''}}"
+        bindtap="setRating"
+        data-rating="2"
+      >★</text>
+      <text 
+        class="star {{rating >= 3 ? 'active' : ''}}"
+        bindtap="setRating"
+        data-rating="3"
+      >★</text>
+      <text 
+        class="star {{rating >= 4 ? 'active' : ''}}"
+        bindtap="setRating"
+        data-rating="4"
+      >★</text>
+      <text 
+        class="star {{rating >= 5 ? 'active' : ''}}"
+        bindtap="setRating"
+        data-rating="5"
+      >★</text>
+    </view>
+    <text class="rating-text">{{ratingText}}</text>
+  </view>
+
+  <!-- 反馈标签 -->
+  <view class="feedback-tags-section">
+    <text class="section-label">练习感受（可多选）</text>
+    <view class="tags">
+      <view 
+        class="tag {{item.selected ? 'selected' : ''}}"
+        wx:for="{{feedbackTags}}"
+        wx:key="index"
+        bindtap="toggleTag"
+        data-index="{{index}}"
+      >{{item.name}}</view>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="notes-section">
+    <text class="section-label">心得记录（可选）</text>
+    <textarea 
+      class="notes-input"
+      placeholder="记录这次练习的感受、想法..."
+      maxlength="200"
+      bindinput="onNotesInput"
+      value="{{notes}}"
+    ></textarea>
+    <text class="notes-count">{{notes.length}}/200</text>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="actions">
+    <button class="save-btn" bindtap="saveFeedback">保存记录</button>
+    <button class="skip-btn" bindtap="skipFeedback">跳过</button>
+  </view>
+</view>

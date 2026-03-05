@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>止观AI - 禅修助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --accent: #4a9eff;
+            --accent-light: #6ab3ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-muted: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* 页面容器 */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .page.exiting {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        /* 首页样式 */
+        .home-page {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .greeting {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .sub-greeting {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 时长选择 */
+        .duration-section {
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .section-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .duration-btn {
+            background: rgba(74, 158, 255, 0.1);
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            color: var(--text-primary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        .duration-btn:hover {
+            background: rgba(74, 158, 255, 0.2);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .duration-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(74, 158, 255, 0.4);
+        }
+
+        /* 模式选择 */
+        .mode-section {
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .mode-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-secondary);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .mode-btn.selected {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        /* 开始按钮 */
+        .start-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            border: none;
+            color: white;
+            padding: 18px 60px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(74, 158, 255, 0.3);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(74, 158, 255, 0.5);
+        }
+
+        .start-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* 记录入口 */
+        .records-entry {
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1.2s forwards;
+        }
+
+        .records-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .records-link:hover {
+            color: var(--accent);
+        }
+
+        /* 练习页样式 */
+        .practice-page {
+            justify-content: space-between;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .practice-header {
+            text-align: center;
+        }
+
+        .stage-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stage-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .stage-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .stage-dot.completed {
+            background: var(--success);
+        }
+
+        .stage-name {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .stage-hint {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            min-height: 24px;
+        }
+
+        /* 呼吸动画圆圈 */
+        .breath-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .breath-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 158, 255, 0.3) 0%, rgba(74, 158, 255, 0.1) 50%, transparent 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        .breath-inner {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 158, 255, 0.5) 0%, rgba(74, 158, 255, 0.2) 60%, transparent 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: breathe 8s ease-in-out infinite reverse;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .breath-text {
+            position: absolute;
+            bottom: -40px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            animation: breathText 8s ease-in-out infinite;
+        }
+
+        @keyframes breathText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 进度条 */
+        .progress-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 30px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 2px;
+            transition: width 1s linear;
+            width: 0%;
+        }
+
+        /* 控制按钮 */
+        .practice-controls {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-primary);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .control-btn.primary {
+            background: var(--accent);
+            width: 70px;
+            height: 70px;
+        }
+
+        .control-btn.primary:hover {
+            background: var(--accent-light);
+        }
+
+        .control-btn.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .control-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* 完成页样式 */
+        .complete-page {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .complete-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .complete-title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .complete-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        /* 星级评分 */
+        .rating-section {
+            margin-bottom: 30px;
+        }
+
+        .rating-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--warning);
+            transform: scale(1.2);
+        }
+
+        /* 反馈输入 */
+        .feedback-section {
+            width: 100%;
+            max-width: 350px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: none;
+            min-height: 100px;
+            transition: border-color 0.3s ease;
+        }
+
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .feedback-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* 完成按钮 */
+        .complete-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .complete-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .skip-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .skip-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        /* 记录页样式 */
+        .records-page {
+            padding-top: 20px;
+        }
+
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .records-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 统计卡片 */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* 记录列表 */
+        .records-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .records-list-title {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .record-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .record-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .record-info {
+            flex: 1;
+        }
+
+        .record-date {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .record-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .record-rating {
+            color: var(--warning);
+            font-size: 1rem;
+        }
+
+        .record-duration {
+            color: var(--accent);
+            font-weight: 500;
+            margin-left: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 480px) {
+            .greeting {
+                font-size: 1.5rem;
+            }
+
+            .duration-btn {
+                padding: 12px 25px;
+                font-size: 0.9rem;
+            }
+
+            .mode-btn {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+
+            .breath-circle {
+                width: 160px;
+                height: 160px;
+            }
+
+            .breath-inner {
+                width: 120px;
+                height: 120px;
+            }
+
+            .timer-display {
+                font-size: 2.5rem;
+            }
+
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 引导模式提示 */
+        .guide-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .guide-overlay.active {
+            display: flex;
+        }
+
+        .guide-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 350px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .guide-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .guide-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: var(--text-secondary);
+        }
+
+        .guide-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .guide-btn:hover {
+            background: var(--accent-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- 首页 -->
+    <div class="page home-page active" id="homePage">
+        <h1 class="greeting">🙏 您好</h1>
+        <p class="sub-greeting">愿您在此找到内心的宁静</p>
+        
+        <div class="duration-section">
+            <p class="section-title">选择时长</p>
+            <div class="duration-options">
+                <button class="duration-btn" data-duration="3">3分钟</button>
+                <button class="duration-btn selected" data-duration="5">5分钟</button>
+                <button class="duration-btn" data-duration="10">10分钟</button>
+            </div>
+        </div>
+
+        <div class="mode-section">
+            <p class="section-title">练习模式</p>
+            <div class="mode-options">
+                <button class="mode-btn selected" data-mode="guided">
+                    <span>🎙️</span> 引导模式
+                </button>
+                <button class="mode-btn" data-mode="free">
+                    <span>🧘</span> 自主模式
+                </button>
+            </div>
+        </div>
+
+        <button class="start-btn" id="startBtn">开始止观</button>
+
+        <div class="records-entry">
+            <a href="#" class="records-link" id="recordsLink">
+                <span>📋</span> 查看练习记录
+            </a>
+        </div>
+    </div>
+
+    <!-- 练习页 -->
+    <div class="page practice-page" id="practicePage">
+        <div class="practice-header">
+            <div class="stage-indicator">
+                <div class="stage-dot active" data-stage="0"></div>
+                <div class="stage-dot" data-stage="1"></div>
+                <div class="stage-dot" data-stage="2"></div>
+                <div class="stage-dot" data-stage="3"></div>
+            </div>
+            <p class="stage-name" id="stageName">调身</p>
+            <p class="stage-hint" id="stageHint">调整坐姿，放松身体</p>
+        </div>
+
+        <div class="breath-container">
+            <div class="breath-circle">
+                <div class="breath-inner">
+                    <div class="timer-display" id="timerDisplay">05:00</div>
+                </div>
+            </div>
+            <p class="breath-text" id="breathText">吸气...</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="practice-controls">
+            <button class="control-btn danger" id="stopBtn" title="结束">
+                <span>⏹️</span>
+            </button>
+            <button class="control-btn primary" id="pauseBtn" title="暂停">
+                <span id="pauseIcon">⏸️</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 完成页 -->
+    <div class="page complete-page" id="completePage">
+        <div class="complete-icon">✨</div>
+        <h2 class="complete-title">练习完成</h2>
+        <p class="complete-subtitle">愿这份宁静常伴您左右</p>
+
+        <div class="rating-section">
+            <p class="rating-title">这次练习感觉如何？</p>
+            <div class="star-rating" id="starRating">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+            </div>
+        </div>
+
+        <div class="feedback-section">
+            <textarea class="feedback-textarea" id="feedbackText" placeholder="记录一下这次练习的感受..."></textarea>
+        </div>
+
+        <button class="complete-btn" id="saveBtn">保存记录</button>
+        <button class="skip-btn" id="skipBtn">跳过，返回首页</button>
+    </div>
+
+    <!-- 记录页 -->
+    <div class="page records-page" id="recordsPage">
+        <div class="records-header">
+            <h2 class="records-title">练习记录</h2>
+            <button class="back-btn" id="backBtn">
+                <span>←</span> 返回
+            </button>
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">总次数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTime">0</div>
+                <div class="stat-label">总时长(分)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgRating">-</div>
+                <div class="stat-label">平均评分</div>
+            </div>
+        </div>
+
+        <div class="records-list">
+            <p class="records-list-title">最近练习</p>
+            <div id="recordsList">
+                <div class="empty-state">
+                    <div class="empty-icon">🍃</div>
+                    <p>还没有练习记录</p>
+                    <p style="font-size: 0.85rem; margin-top: 10px;">开始您的第一次禅修之旅吧</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引导提示遮罩 -->
+    <div class="guide-overlay" id="guideOverlay">
+        <div class="guide-content">
+            <div class="guide-icon" id="guideIcon">🧘</div>
+            <p class="guide-text" id="guideText">准备开始...</p>
+            <button class="guide-btn" id="guideBtn">开始</button>
+        </div>
+    </div>
+
+    <script>
+        // 状态管理
+        const state = {
+            duration: 5,
+            mode: 'guided',
+            isPaused: false,
+            remainingTime: 0,
+            totalTime: 0,
+            currentStage: 0,
+            rating: 0,
+            timerInterval: null,
+            breathInterval: null
+        };
+
+        // 阶段配置
+        const stages = [
+            { name: '调身', hint: '调整坐姿，放松身体', icon: '🧘' },
+            { name: '调息', hint: '关注呼吸，自然出入', icon: '🌬️' },
+            { name: '观心', hint: '觉察心念，不随不拒', icon: '💭' },
+            { name: '收功', hint: '缓缓收心，感恩回向', icon: '🙏' }
+        ];
+
+        // DOM 元素
+        const pages = {
+            home: document.getElementById('homePage'),
+            practice: document.getElementById('practicePage'),
+            complete: document.getElementById('completePage'),
+            records: document.getElementById('recordsPage')
+        };
+
+        // 初始化
+        function init() {
+            bindEvents();
+            loadRecords();
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 时长选择
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    state.duration = parseInt(btn.dataset.duration);
+                });
+            });
+
+            // 模式选择
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    state.mode = btn.dataset.mode;
+                });
+            });
+
+            // 开始按钮
+            document.getElementById('startBtn').addEventListener('click', startPractice);
+
+            // 记录链接
+            document.getElementById('recordsLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('records');
+            });
+
+            // 暂停/继续
+            document.getElementById('pauseBtn').addEventListener('click', togglePause);
+
+            // 结束
+            document.getElementById('stopBtn').addEventListener('click', endPractice);
+
+            // 星级评分
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', () => {
+                    state.rating = parseInt(star.dataset.rating);
+                    updateStarDisplay();
+                });
+            });
+
+            // 保存记录
+            document.getElementById('saveBtn').addEventListener('click', saveRecord);
+
+            // 跳过
+            document.getElementById('skipBtn').addEventListener('click', () => {
+                showPage('home');
+                resetState();
+            });
+
+            // 返回按钮
+            document.getElementById('backBtn').addEventListener('click', () => {
+                showPage('home');
+            });
+
+            // 引导按钮
+            document.getElementById('guideBtn').addEventListener('click', () => {
+                document.getElementById('guideOverlay').classList.remove('active');
+                startTimer();
+            });
+        }
+
+        // 页面切换
+        function showPage(pageName) {
+            Object.values(pages).forEach(page => {
+                page.classList.remove('active');
+            });
+            pages[pageName].classList.add('active');
+        }
+
+        // 开始练习
+        function startPractice() {
+            state.totalTime = state.duration * 60;
+            state.remainingTime = state.totalTime;
+            state.currentStage = 0;
+            state.isPaused = false;
+
+            updateTimerDisplay();
+            updateStage();
+
+            if (state.mode === 'guided') {
+                showGuide();
+            } else {
+                showPage('practice');
+                startTimer();
+            }
+        }
+
+        // 显示引导
+        function showGuide() {
+            const overlay = document.getElementById('guideOverlay');
+            const icon = document.getElementById('guideIcon');
+            const text = document.getElementById('guideText');
+
+            icon.textContent = stages[0].icon;
+            text.textContent = `即将开始「${stages[0].name}」阶段\n${stages[0].hint}`;
+
+            overlay.classList.add('active');
+            showPage('practice');
+        }
+
+        // 开始计时
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            clearInterval(state.breathInterval);
+
+            state.timerInterval = setInterval(() => {
+                if (!state.isPaused) {
+                    state.remainingTime--;
+                    updateTimerDisplay();
+                    updateProgress();
+                    updateStage();
+
+                    if (state.remainingTime <= 0) {
+                        completePractice();
+                    }
+                }
+            }, 1000);
+
+            // 呼吸文字动画
+            const breathTexts = ['吸气...', '保持...', '呼气...', '保持...'];
+            let breathIndex = 0;
+            state.breathInterval = setInterval(() => {
+                if (!state.isPaused) {
+                    breathIndex = (breathIndex + 1) % breathTexts.length;
+                    document.getElementById('breathText').textContent = breathTexts[breathIndex];
+                }
+            }, 2000);
+        }
+
+        // 更新计时器显示
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.remainingTime / 60);
+            const seconds = state.remainingTime % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const progress = ((state.totalTime - state.remainingTime) / state.totalTime) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        // 更新阶段
+        function updateStage() {
+            const elapsed = state.totalTime - state.remainingTime;
+            const stageDuration = state.totalTime / 4;
+            const newStage = Math.min(Math.floor(elapsed / stageDuration), 3);
+
+            if (newStage !== state.currentStage) {
+                state.currentStage = newStage;
+                
+                // 更新阶段指示器
+                document.querySelectorAll('.stage-dot').forEach((dot, index) => {
+                    dot.classList.remove('active', 'completed');
+                    if (index < state.currentStage) {
+                        dot.classList.add('completed');
+                    } else if (index === state.currentStage) {
+                        dot.classList.add('active');
+                    }
+                });
+
+                // 更新阶段文字
+                document.getElementById('stageName').textContent = stages[state.currentStage].name;
+                document.getElementById('stageHint').textContent = stages[state.currentStage].hint;
+
+                // 引导模式下显示提示
+                if (state.mode === 'guided' && state.currentStage > 0) {
+                    showStageGuide();
+                }
+            }
+        }
+
+        // 显示阶段引导
+        function showStageGuide() {
+            const overlay = document.getElementById('guideOverlay');
+            const icon = document.getElementById('guideIcon');
+            const text = document.getElementById('guideText');
+
+            icon.textContent = stages[state.currentStage].icon;
+            text.textContent = `进入「${stages[state.currentStage].name}」阶段\n${stages[state.currentStage].hint}`;
+
+            overlay.classList.add('active');
+            state.isPaused = true;
+        }
+
+        // 暂停/继续
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            document.getElementById('pauseIcon').textContent = state.isPaused ? '▶️' : '⏸️';
+            document.getElementById('pauseBtn').title = state.isPaused ? '继续' : '暂停';
+        }
+
+        // 结束练习
+        function endPractice() {
+            if (confirm('确定要结束当前练习吗？')) {
+                clearInterval(state.timerInterval);
+                clearInterval(state.breathInterval);
+                showPage('home');
+                resetState();
+            }
+        }
+
+        // 完成练习
+        function completePractice() {
+            clearInterval(state.timerInterval);
+            clearInterval(state.breathInterval);
+            showPage('complete');
+        }
+
+        // 更新星级显示
+        function updateStarDisplay() {
+            document.querySelectorAll('.star').forEach((star, index) => {
+                if (index < state.rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // 保存记录
+        function saveRecord() {
+            const feedback = document.getElementById('feedbackText').value;
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                duration: state.duration,
+                mode: state.mode,
+                rating: state.rating,
+                feedback: feedback
+            };
+
+            const records = JSON.parse(localStorage.getItem('meditationRecords') || '[]');
+            records.unshift(record);
+            localStorage.setItem('meditationRecords', JSON.stringify(records));
+
+            showPage('home');
+            resetState();
+            loadRecords();
+        }
+
+        // 重置状态
+        function resetState() {
+            state.rating = 0;
+            state.isPaused = false;
+            state.currentStage = 0;
+            document.getElementById('feedbackText').value = '';
+            updateStarDisplay();
+            document.getElementById('pauseIcon').textContent = '⏸️';
+            document.querySelectorAll('.stage-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index === 0) dot.classList.add('active');
+            });
+        }
+
+        // 加载记录
+        function loadRecords() {
+            const records = JSON.parse(localStorage.getItem('meditationRecords') || '[]');
+            
+            // 更新统计
+            const totalCount = records.length;
+            const totalTime = records.reduce((sum, r) => sum + r.duration, 0);
+            const avgRating = totalCount > 0 
+                ? (records.reduce((sum, r) => sum + (r.rating || 0), 0) / totalCount).toFixed(1)
+                : '-';
+
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('totalTime').textContent = totalTime;
+            document.getElementById('avgRating').textContent = avgRating;
+
+            // 更新列表
+            const listContainer = document.getElementById('recordsList');
+            if (records.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍃</div>
+                        <p>还没有练习记录</p>
+                        <p style="font-size: 0.85rem; margin-top: 10px;">开始您的第一次禅修之旅吧</p>
+                    </div>
+                `;
+            } else {
+                listContainer.innerHTML = records.slice(0, 20).map(record => {
+                    const date = new Date(record.date);
+                    const dateStr = `${date.getMonth() + 1}月${date.getDate()}日`;
+                    const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                    const modeText = record.mode === 'guided' ? '引导' : '自主';
+                    const stars = '★'.repeat(record.rating || 0) + '☆'.repeat(5 - (record.rating || 0));
+
+                    return `
+                        <div class="record-item">
+                            <div class="record-info">
+                                <div class="record-date">${dateStr} ${timeStr}</div>
+                                <div class="record-meta">${modeText}模式 · ${record.feedback ? '有反馈' : '无反馈'}</div>
+                            </div>
+                            <div class="record-rating">${stars}</div>
+                            <div class="record-duration">${record.duration}分钟</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>

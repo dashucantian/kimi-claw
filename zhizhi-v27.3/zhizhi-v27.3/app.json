@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/practice/practice",
+    "pages/feedback/feedback",
+    "pages/record/record",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0A1628",
+    "navigationBarTitleText": "止止",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0A1628",
+    "backgroundColorTop": "#0A1628",
+    "backgroundColorBottom": "#0A1628"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4a9eff",
+    "backgroundColor": "#1a1a2e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "练习"
+      },
+      {
+        "pagePath": "pages/record/record",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "requiredBackgroundModes": ["audio"],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

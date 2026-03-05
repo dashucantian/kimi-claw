@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>止观AI - 禅修助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* 页面切换 */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 首页样式 */
+        .home-header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .greeting {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e94560;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 5px;
+        }
+
+        .breath-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .breath-button {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breath-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(233, 69, 96, 0.5);
+        }
+
+        .breath-button::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            animation: breathe 4s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 0; }
+        }
+
+        .breath-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .breath-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .settings-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .duration-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .duration-btn.active {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        .mode-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .mode-btn.active {
+            background: #0f3460;
+            border-color: #e94560;
+        }
+
+        /* 练习页样式 */
+        .practice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .mute-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 56px;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+        }
+
+        .phase-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 10px;
+        }
+
+        .stage-info {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .stage-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(233, 69, 96, 0.2);
+            border: 1px solid rgba(233, 69, 96, 0.5);
+            border-radius: 20px;
+            color: #e94560;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .guide-text {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .practice-controls {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .control-btn.primary {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        .control-btn.primary:hover {
+            background: #ff6b6b;
+        }
+
+        /* 完成页样式 */
+        .complete-header {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+
+        .complete-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .complete-title {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .complete-subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+
+        .rating-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .rating-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .star {
+            font-size: 36px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.3;
+        }
+
+        .star.active {
+            opacity: 1;
+        }
+
+        .star:hover {
+            transform: scale(1.2);
+        }
+
+        .feedback-section {
+            margin: 30px 0;
+        }
+
+        .feedback-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .feedback-tag {
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .feedback-tag.active {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        .note-section {
+            margin: 30px 0;
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            resize: none;
+            min-height: 100px;
+        }
+
+        .note-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .note-input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        .complete-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        /* 记录页样式 */
+        .records-header {
+            padding: 30px 0;
+        }
+
+        .records-title {
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .summary-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .summary-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e94560;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 5px;
+        }
+
+        .calendar-section {
+            margin: 30px 0;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-month {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            padding: 10px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-day:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .calendar-day.other-month {
+            color: rgba(255,255,255,0.3);
+        }
+
+        .calendar-day.today {
+            border: 1px solid #e94560;
+        }
+
+        .calendar-day.has-record {
+            background: rgba(233, 69, 96, 0.3);
+            color: #fff;
+        }
+
+        .recent-records {
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .record-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .record-info {
+            flex: 1;
+        }
+
+        .record-date {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .record-duration {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .record-rating {
+            color: #e94560;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .nav-item.active {
+            color: #e94560;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                padding-bottom: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SVG渐变定义 -->
+        <svg width="0" height="0">
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#e94560"/>
+                    <stop offset="100%" style="stop-color:#ff6b6b"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- 首页 -->
+        <div id="homePage" class="page active">
+            <div class="home-header">
+                <h1 class="greeting" id="greeting">早安，修行者</h1>
+                <p class="date" id="currentDate"></p>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-value" id="todayCount">0</div>
+                    <div class="stat-label">今日练习</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="streakDays">0</div>
+                    <div class="stat-label">连续天数</div>
+                </div>
+            </div>
+
+            <div class="breath-container">
+                <button class="breath-button" onclick="startPractice()">
+                    <span class="breath-icon">🧘</span>
+                    <span class="breath-text">开始修行</span>
+                </button>
+            </div>
+
+            <div class="settings-panel">
+                <div class="setting-group">
+                    <label class="setting-label">练习时长</label>
+                    <div class="duration-options">
+                        <button class="duration-btn active" data-duration="3">3分钟</button>
+                        <button class="duration-btn" data-duration="5">5分钟</button>
+                        <button class="duration-btn" data-duration="15">15分钟</button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">练习模式</label>
+                    <div class="mode-options">
+                        <button class="mode-btn active" data-mode="guided">引导模式</button>
+                        <button class="mode-btn" data-mode="free">自主模式</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 练习页 -->
+        <div id="practicePage" class="page">
+            <div class="practice-header">
+                <button class="back-btn" onclick="endPractice()">←</button>
+                <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+            </div>
+
+            <div class="timer-container">
+                <div class="progress-ring">
+                    <svg width="280" height="280">
+                        <circle class="progress-ring-bg" cx="140" cy="140" r="130"/>
+                        <circle class="progress-ring-fill" id="progressRing" cx="140" cy="140" r="130"
+                                stroke-dasharray="816.8" stroke-dashoffset="0"/>
+                    </svg>
+                    <div class="timer-content">
+                        <div class="timer-display" id="timerDisplay">03:00</div>
+                        <div class="phase-label" id="phaseLabel">准备开始</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage-info">
+                <div class="stage-badge" id="stageBadge">调身调息</div>
+                <p class="guide-text" id="guideText">调整坐姿，放松身心，准备开始修行</p>
+            </div>
+
+            <div class="practice-controls">
+                <button class="control-btn" onclick="endPractice()">⏹</button>
+                <button class="control-btn primary" id="pauseBtn" onclick="togglePause()">⏸</button>
+            </div>
+        </div>
+
+        <!-- 完成页 -->
+        <div id="completePage" class="page">
+            <div class="complete-header">
+                <div class="complete-icon">🙏</div>
+                <h1 class="complete-title">修行完成</h1>
+                <p class="complete-subtitle">愿这份平静常伴你左右</p>
+            </div>
+
+            <div class="rating-section">
+                <p class="rating-label">这次修行的体验如何？</p>
+                <div class="stars" id="starContainer">
+                    <span class="star" data-rating="1">⭐</span>
+                    <span class="star" data-rating="2">⭐</span>
+                    <span class="star" data-rating="3">⭐</span>
+                    <span class="star" data-rating="4">⭐</span>
+                    <span class="star" data-rating="5">⭐</span>
+                </div>
+            </div>
+
+            <div class="feedback-section">
+                <p class="rating-label">选择标签（可多选）</p>
+                <div class="feedback-tags">
+                    <button class="feedback-tag" data-tag="平静">😌 平静</button>
+                    <button class="feedback-tag" data-tag="专注">🎯 专注</button>
+                    <button class="feedback-tag" data-tag="放松">😊 放松</button>
+                    <button class="feedback-tag" data-tag="困倦">😴 困倦</button>
+                    <button class="feedback-tag" data-tag="焦虑">😰 焦虑</button>
+                    <button class="feedback-tag" data-tag="愉悦">😄 愉悦</button>
+                </div>
+            </div>
+
+            <div class="note-section">
+                <p class="rating-label">记录心得（可选）</p>
+                <textarea class="note-input" id="noteInput" placeholder="写下这次修行的感受..."></textarea>
+            </div>
+
+            <div class="complete-actions">
+                <button class="btn btn-secondary" onclick="skipSave()">跳过</button>
+                <button class="btn btn-primary" onclick="saveRecord()">保存记录</button>
+            </div>
+        </div>
+
+        <!-- 记录页 -->
+        <div id="recordsPage" class="page">
+            <div class="records-header">
+                <h1 class="records-title">修行记录</h1>
+            </div>
+
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-value" id="totalCount">0</div>
+                    <div class="summary-label">总次数</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="totalHours">0</div>
+                    <div class="summary-label">总小时</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="recordStreak">0</div>
+                    <div class="summary-label">连续天数</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="monthCount">0</div>
+                    <div class="summary-label">本月天数</div>
+                </div>
+            </div>
+
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <span class="calendar-month" id="calendarMonth"></span>
+                    <div class="calendar-nav">
+                        <button onclick="changeMonth(-1)">←</button>
+                        <button onclick="changeMonth(1)">→</button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- 日历由JS生成 -->
+                </div>
+            </div>
+
+            <div class="recent-records">
+                <h2 class="section-title">最近记录</h2>
+                <div id="recentRecordsList">
+                    <!-- 记录列表由JS生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('home')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">首页</span>
+            </div>
+            <div class="nav-item" onclick="showPage('records')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">记录</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 数据存储 ====================
+        const Storage = {
+            get(key) {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            },
+            set(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            },
+            getRecords() {
+                return this.get('meditation_records') || [];
+            },
+            addRecord(record) {
+                const records = this.getRecords();
+                records.unshift(record);
+                this.set('meditation_records', records);
+            }
+        };
+
+        // ==================== 音效管理 ====================
+        const AudioManager = {
+            sounds: {},
+            muted: false,
+            currentTimeouts: [],
+
+            init() {
+                // 初始化音效对象（使用相对路径）
+                this.sounds = {
+                    largeGong: new Audio('assets/large_gong.mp3'),
+                    smallBell: new Audio('assets/small_bell.mp3'),
+                    woodenFish: new Audio('assets/wooden_fish.mp3'),
+                    windChime: new Audio('assets/wind_chime.mp3'),
+                    waterDrop: new Audio('assets/water_drop.mp3')
+                };
+
+                // 预加载音效
+                Object.values(this.sounds).forEach(audio => {
+                    audio.load();
+                });
+            },
+
+            play(soundName, volume = 1.0) {
+                if (this.muted) return;
+                
+                const audio = this.sounds[soundName];
+                if (audio) {
+                    audio.volume = volume;
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                }
+            },
+
+            playWithDelay(soundName, delay, volume = 1.0) {
+                const timeout = setTimeout(() => {
+                    this.play(soundName, volume);
+                }, delay);
+                this.currentTimeouts.push(timeout);
+                return timeout;
+            },
+
+            clearAllTimeouts() {
+                this.currentTimeouts.forEach(timeout => clearTimeout(timeout));
+                this.currentTimeouts = [];
+            },
+
+            toggleMute() {
+                this.muted = !this.muted;
+                return this.muted;
+            }
+        };
+
+        // ==================== 状态管理 ====================
+        const State = {
+            duration: 3, // 分钟
+            mode: 'guided',
+            isPaused: false,
+            remainingTime: 0,
+            totalTime: 0,
+            currentStage: '',
+            timerInterval: null,
+            rating: 0,
+            selectedTags: [],
+            currentDate: new Date(),
+            calendarDate: new Date()
+        };
+
+        // ==================== 页面初始化 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            AudioManager.init();
+            initHomePage();
+            initEventListeners();
+            updateDateDisplay();
+        });
+
+        function initHomePage() {
+            updateGreeting();
+            updateStats();
+        }
+
+        function initEventListeners() {
+            // 时长选择
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    State.duration = parseInt(btn.dataset.duration);
+                });
+            });
+
+            // 模式选择
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    State.mode = btn.dataset.mode;
+                });
+            });
+
+            // 评分星星
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', () => {
+                    State.rating = parseInt(star.dataset.rating);
+                    updateStars();
+                });
+            });
+
+            // 反馈标签
+            document.querySelectorAll('.feedback-tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    const tagValue = tag.dataset.tag;
+                    if (State.selectedTags.includes(tagValue)) {
+                        State.selectedTags = State.selectedTags.filter(t => t !== tagValue);
+                        tag.classList.remove('active');
+                    } else {
+                        State.selectedTags.push(tagValue);
+                        tag.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // ==================== 首页功能 ====================
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting = '早安';
+            if (hour >= 12 && hour < 18) greeting = '午安';
+            else if (hour >= 18) greeting = '晚安';
+            document.getElementById('greeting').textContent = `${greeting}，修行者`;
+        }
+
+        function updateDateDisplay() {
+            const date = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('zh-CN', options);
+        }
+
+        function updateStats() {
+            const records = Storage.getRecords();
+            const today = new Date().toDateString();
+            
+            // 今日练习次数
+            const todayCount = records.filter(r => new Date(r.date).toDateString() === today).length;
+            document.getElementById('todayCount').textContent = todayCount;
+
+            // 连续天数
+            const streak = calculateStreak(records);
+            document.getElementById('streakDays').textContent = streak;
+        }
+
+        function calculateStreak(records) {
+            if (records.length === 0) return 0;
+            
+            const dates = [...new Set(records.map(r => new Date(r.date).toDateString()))].sort((a, b) => new Date(b) - new Date(a));
+            
+            let streak = 0;
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            
+            if (dates[0] === today || dates[0] === yesterday) {
+                streak = 1;
+                for (let i = 1; i < dates.length; i++) {
+                    const prevDate = new Date(dates[i-1]);
+                    const currDate = new Date(dates[i]);
+                    const diffDays = (prevDate - currDate) / (1000 * 60 * 60 * 24);
+                    if (diffDays === 1) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+            return streak;
+        }
+
+        // ==================== 页面切换 ====================
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            if (page === 'home') {
+                document.getElementById('homePage').classList.add('active');
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+                updateStats();
+            } else if (page === 'records') {
+                document.getElementById('recordsPage').classList.add('active');
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+                initRecordsPage();
+            }
+        }
+
+        // ==================== 练习功能 ====================
+        function startPractice() {
+            State.totalTime = State.duration * 60;
+            State.remainingTime = State.totalTime;
+            State.isPaused = false;
+            
+            showPage('practice');
+            document.getElementById('practicePage').classList.add('active');
+            
+            updateTimerDisplay();
+            startTimer();
+            
+            if (State.mode === 'guided') {
+                startGuidedMode();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(State.timerInterval);
+            
+            State.timerInterval = setInterval(() => {
+                if (!State.isPaused) {
+                    State.remainingTime--;
+                    updateTimerDisplay();
+                    updateProgressRing();
+                    
+                    if (State.mode === 'guided') {
+                        updateStage();
+                    }
+                    
+                    if (State.remainingTime <= 0) {
+                        completePractice();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(State.remainingTime / 60);
+            const seconds = State.remainingTime % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgressRing() {
+            const circle = document.getElementById('progressRing');
+            const circumference = 2 * Math.PI * 130;
+            const progress = State.remainingTime / State.totalTime;
+            const offset = circumference * (1 - progress);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // ==================== 引导模式 ====================
+        function startGuidedMode() {
+            const totalTime = State.totalTime;
+            const elapsed = 0;
+            
+            // 阶段1: 调身调息 (0-16秒)
+            // 播放开场大磬（音量50%）
+            AudioManager.play('largeGong', 0.5);
+            updateStageInfo('调身调息', '调整坐姿，放松身心，深呼吸...');
+            
+            // 阶段2: 止息 (16秒-90秒) - 水滴声每7-9秒随机播放
+            const stage2Start = 16;
+            const stage2End = Math.min(90, totalTime - 15);
+            
+            for (let t = stage2Start; t < stage2End; t += (7 + Math.random() * 2)) {
+                const delay = (t - elapsed) * 1000;
+                if (delay > 0) {
+                    AudioManager.playWithDelay('waterDrop', delay, 0.4);
+                }
+            }
+            
+            // 阶段3: 观心 (90秒-结束前15秒) - 风铃声每8-10秒随机播放
+            const stage3Start = 90;
+            const stage3End = Math.max(stage3Start, totalTime - 15);
+            
+            for (let t = stage3Start; t < stage3End; t += (8 + Math.random() * 2)) {
+                const delay = (t - elapsed) * 1000;
+                if (delay > 0) {
+                    AudioManager.playWithDelay('windChime', delay, 0.5);
+                }
+            }
+            
+            // 阶段4: 收功 (最后15秒) - 木鱼声一声
+            const stage4Start = Math.max(0, totalTime - 15);
+            const stage4Delay = stage4Start * 1000;
+            AudioManager.playWithDelay('woodenFish', stage4Delay, 0.6);
+        }
+
+        function updateStage() {
+            const elapsed = State.totalTime - State.remainingTime;
+            const totalTime = State.totalTime;
+            
+            if (elapsed < 16) {
+                updateStageInfo('调身调息', '调整坐姿，放松身心，深呼吸...');
+            } else if (elapsed < 90 && elapsed < totalTime - 15) {
+                updateStageInfo('止息', '保持呼吸自然，让心念逐渐平静...');
+            } else if (elapsed >= 90 && elapsed < totalTime - 15) {
+                updateStageInfo('观心', '觉察内心的念头，不评判，只是观察...');
+            } else if (elapsed >= totalTime - 15) {
+                updateStageInfo('收功', '慢慢将意识带回，准备结束...');
+            }
+        }
+
+        function updateStageInfo(stage, text) {
+            if (State.currentStage !== stage) {
+                State.currentStage = stage;
+                document.getElementById('stageBadge').textContent = stage;
+                document.getElementById('guideText').textContent = text;
+                document.getElementById('phaseLabel').textContent = stage;
+            }
+        }
+
+        function togglePause() {
+            State.isPaused = !State.isPaused;
+            document.getElementById('pauseBtn').textContent = State.isPaused ? '▶' : '⏸';
+        }
+
+        function toggleMute() {
+            const muted = AudioManager.toggleMute();
+            document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+        }
+
+        function endPractice() {
+            clearInterval(State.timerInterval);
+            AudioManager.clearAllTimeouts();
+            
+            // 停止所有音效
+            Object.values(AudioManager.sounds).forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            
+            showPage('home');
+        }
+
+        function completePractice() {
+            clearInterval(State.timerInterval);
+            AudioManager.clearAllTimeouts();
+            
+            // 播放结束引磬声（3-5秒）
+            AudioManager.play('smallBell', 0.5);
+            
+            // 重置状态
+            State.rating = 0;
+            State.selectedTags = [];
+            document.getElementById('noteInput').value = '';
+            updateStars();
+            document.querySelectorAll('.feedback-tag').forEach(t => t.classList.remove('active'));
+            
+            // 显示完成页
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('completePage').classList.add('active');
+        }
+
+        // ==================== 完成页功能 ====================
+        function updateStars() {
+            document.querySelectorAll('.star').forEach((star, index) => {
+                if (index < State.rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function saveRecord() {
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                duration: State.duration,
+                mode: State.mode,
+                rating: State.rating,
+                tags: [...State.selectedTags],
+                note: document.getElementById('noteInput').value
+            };
+            
+            Storage.addRecord(record);
+            showPage('home');
+        }
+
+        function skipSave() {
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                duration: State.duration,
+                mode: State.mode,
+                rating: 0,
+                tags: [],
+                note: ''
+            };
+            
+            Storage.addRecord(record);
+            showPage('home');
+        }
+
+        // ==================== 记录页功能 ====================
+        function initRecordsPage() {
+            updateSummaryStats();
+            renderCalendar();
+            renderRecentRecords();
+        }
+
+        function updateSummaryStats() {
+            const records = Storage.getRecords();
+            
+            // 总次数
+            document.getElementById('totalCount').textContent = records.length;
+            
+            // 总小时
+            const totalMinutes = records.reduce((sum, r) => sum + r.duration, 0);
+            document.getElementById('totalHours').textContent = (totalMinutes / 60).toFixed(1);
+            
+            // 连续天数
+            document.getElementById('recordStreak').textContent = calculateStreak(records);
+            
+            // 本月天数
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const monthDays = new Set(
+                records
+                    .filter(r => {
+                        const date = new Date(r.date);
+                        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+                    })
+                    .map(r => new Date(r.date).getDate())
+            ).size;
+            document.getElementById('monthCount').textContent = monthDays;
+        }
+
+        function renderCalendar() {
+            const year = State.calendarDate.getFullYear();
+            const month = State.calendarDate.getMonth();
+            
+            document.getElementById('calendarMonth').textContent = 
+                `${year}年${month + 1}月`;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            const records = Storage.getRecords();
+            const recordDates = new Set(
+                records.map(r => new Date(r.date).toDateString())
+            );
+            
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            
+            // 星期标题
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            weekdays.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+            
+            // 上月日期
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.textContent = daysInPrevMonth - i;
+                grid.appendChild(day);
+            }
+            
+            // 当月日期
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+                day.textContent = i;
+                
+                const dateStr = new Date(year, month, i).toDateString();
+                
+                if (recordDates.has(dateStr)) {
+                    day.classList.add('has-record');
+                }
+                
+                if (year === today.getFullYear() && 
+                    month === today.getMonth() && 
+                    i === today.getDate()) {
+                    day.classList.add('today');
+                }
+                
+                grid.appendChild(day);
+            }
+            
+            // 下月日期
+            const remainingCells = 42 - (firstDay + daysInMonth);
+            for (let i = 1; i <= remainingCells; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.textContent = i;
+                grid.appendChild(day);
+            }
+        }
+
+        function changeMonth(delta) {
+            State.calendarDate.setMonth(State.calendarDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function renderRecentRecords() {
+            const records = Storage.getRecords().slice(0, 10);
+            const list = document.getElementById('recentRecordsList');
+            
+            if (records.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.5);">暂无记录</p>';
+                return;
+            }
+            
+            list.innerHTML = records.map(record => {
+                const date = new Date(record.date);
+                const dateStr = `${date.getMonth() + 1}月${date.getDate()}日`;
+                const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                const stars = '⭐'.repeat(record.rating || 0);
+                
+                return `
+                    <div class="record-item">
+                        <div class="record-info">
+                            <div class="record-date">${dateStr} ${timeStr}</div>
+                            <div class="record-duration">${record.duration}分钟 · ${record.mode === 'guided' ? '引导' : '自主'}模式</div>
+                        </div>
+                        <div class="record-rating">${stars}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

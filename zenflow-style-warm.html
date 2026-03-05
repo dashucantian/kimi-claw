@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenFlow - 温暖禅修</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --warm-pink: #FFB5BA;
+            --warm-pink-light: #FFD1D4;
+            --cream-yellow: #FFE4A1;
+            --cream-yellow-light: #FFF2D1;
+            --lavender: #E8D5F2;
+            --lavender-light: #F0E6F7;
+            --mint-green: #B8E6D9;
+            --mint-green-light: #D4F0E8;
+            --soft-peach: #FFD4C4;
+            --soft-coral: #FFA69E;
+            --warm-white: #FFFCF8;
+            --warm-gray: #8B8680;
+            --text-dark: #5A5652;
+            --text-light: #9A9590;
+        }
+
+        body {
+            font-family: 'Quicksand', 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 50%, var(--lavender-light) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-dark);
+        }
+
+        /* 手绘云朵背景 */
+        .cloud-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 100px;
+        }
+
+        .cloud1 {
+            width: 120px;
+            height: 50px;
+            top: 10%;
+            left: -10%;
+            animation-duration: 25s;
+        }
+
+        .cloud1::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 15px;
+        }
+
+        .cloud1::after {
+            width: 50px;
+            height: 50px;
+            top: -20px;
+            left: 55px;
+        }
+
+        .cloud2 {
+            width: 100px;
+            height: 40px;
+            top: 30%;
+            right: -10%;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+
+        .cloud2::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud2::after {
+            width: 40px;
+            height: 40px;
+            top: -15px;
+            left: 45px;
+        }
+
+        .cloud3 {
+            width: 80px;
+            height: 35px;
+            top: 60%;
+            left: -5%;
+            animation-duration: 22s;
+            animation-delay: -10s;
+        }
+
+        .cloud3::before {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: 12px;
+        }
+
+        .cloud3::after {
+            width: 35px;
+            height: 35px;
+            top: -12px;
+            left: 38px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(20px) translateY(-10px); }
+            50% { transform: translateX(-10px) translateY(5px); }
+            75% { transform: translateX(15px) translateY(-5px); }
+        }
+
+        /* 星星装饰 */
+        .star {
+            position: fixed;
+            color: var(--cream-yellow);
+            font-size: 20px;
+            animation: twinkle 3s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* 主容器 */
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 252, 248, 0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 60px rgba(255, 181, 186, 0.2);
+        }
+
+        /* 页面切换 */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 首页样式 */
+        .home-header {
+            padding: 40px 24px 20px;
+            text-align: center;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .user-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+        }
+
+        /* 呼吸圆环 - 云朵棉花糖风格 */
+        .breath-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .breath-ring {
+            width: 280px;
+            height: 280px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .breath-cloud {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .breath-cloud-1 {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--warm-pink-light) 0%, var(--soft-peach) 100%);
+            opacity: 0.3;
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        .breath-cloud-2 {
+            width: 85%;
+            height: 85%;
+            background: linear-gradient(135deg, var(--cream-yellow) 0%, var(--warm-pink) 100%);
+            opacity: 0.4;
+            animation: breathe 8s ease-in-out infinite 0.5s;
+        }
+
+        .breath-cloud-3 {
+            width: 70%;
+            height: 70%;
+            background: linear-gradient(135deg, var(--lavender) 0%, var(--mint-green) 100%);
+            opacity: 0.5;
+            animation: breathe 8s ease-in-out infinite 1s;
+        }
+
+        .breath-center {
+            width: 55%;
+            height: 55%;
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 
+                0 10px 40px rgba(255, 181, 186, 0.3),
+                inset 0 -5px 20px rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            animation: gentleBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.15); opacity: 0.6; }
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .breath-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .breath-sub {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* 今日状态卡片 */
+        .status-section {
+            padding: 0 24px;
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '✨';
+            font-size: 16px;
+        }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 100%);
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 181, 186, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(255, 181, 186, 0.25);
+        }
+
+        .status-card:nth-child(2) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--lavender-light) 100%);
+        }
+
+        .status-card:nth-child(3) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--mint-green-light) 100%);
+        }
+
+        .status-card:nth-child(4) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--warm-pink-light) 100%);
+        }
+
+        .status-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* 推荐课程 */
+        .recommend-section {
+            padding: 30px 24px;
+        }
+
+        .course-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 10px 5px;
+            scrollbar-width: none;
+        }
+
+        .course-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .course-card {
+            min-width: 160px;
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--soft-peach) 100%);
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 166, 158, 0.2);
+            transition: transform 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .course-card:nth-child(2) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--lavender) 100%);
+        }
+
+        .course-card:nth-child(3) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--mint-green) 100%);
+        }
+
+        .course-card:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .course-emoji {
+            font-size: 48px;
+            margin-bottom: 12px;
+            animation: floatEmoji 3s ease-in-out infinite;
+        }
+
+        @keyframes floatEmoji {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .course-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .course-duration {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* 播放器页 */
+        .player-page {
+            background: linear-gradient(180deg, var(--lavender-light) 0%, var(--warm-white) 50%, var(--cream-yellow-light) 100%);
+        }
+
+        .player-header {
+            padding: 50px 24px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            background: var(--warm-white);
+        }
+
+        .player-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .more-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 播放器可视化 */
+        .player-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .visual-container {
+            width: 260px;
+            height: 260px;
+            position: relative;
+        }
+
+        .visual-ring {
+            position: absolute;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .visual-ring-1 {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--soft-coral) 100%);
+            opacity: 0.2;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .visual-ring-2 {
+            width: 85%;
+            height: 85%;
+            background: linear-gradient(135deg, var(--cream-yellow) 0%, var(--warm-pink) 100%);
+            opacity: 0.3;
+            animation: pulse 4s ease-in-out infinite 0.3s;
+        }
+
+        .visual-ring-3 {
+            width: 70%;
+            height: 70%;
+            background: linear-gradient(135deg, var(--lavender) 0%, var(--mint-green) 100%);
+            opacity: 0.4;
+            animation: pulse 4s ease-in-out infinite 0.6s;
+        }
+
+        .visual-center {
+            width: 55%;
+            height: 55%;
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 
+                0 15px 50px rgba(255, 181, 186, 0.4),
+                inset 0 -5px 20px rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            animation: gentleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-10px); }
+        }
+
+        .visual-emoji {
+            font-size: 64px;
+            animation: breatheEmoji 4s ease-in-out infinite;
+        }
+
+        @keyframes breatheEmoji {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 音频波浪 */
+        .wave-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 4px;
+            height: 60px;
+            margin: 30px 0;
+        }
+
+        .wave-bar {
+            width: 6px;
+            background: linear-gradient(to top, var(--warm-pink), var(--cream-yellow));
+            border-radius: 10px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 35px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 50px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 40px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 55px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 30px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 45px; animation-delay: 0.6s; }
+        .wave-bar:nth-child(8) { height: 25px; animation-delay: 0.7s; }
+        .wave-bar:nth-child(9) { height: 35px; animation-delay: 0.8s; }
+        .wave-bar:nth-child(10) { height: 20px; animation-delay: 0.9s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.6); }
+        }
+
+        /* 播放信息 */
+        .player-info {
+            text-align: center;
+            padding: 0 40px;
+        }
+
+        .track-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .track-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* 进度条 */
+        .progress-container {
+            padding: 30px 40px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 181, 186, 0.3);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 45%;
+            background: linear-gradient(90deg, var(--warm-pink), var(--soft-coral));
+            border-radius: 10px;
+            position: relative;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--warm-white);
+            border: 3px solid var(--warm-pink);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(255, 181, 186, 0.4);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* 播放控制 */
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 20px 40px 40px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .play-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--soft-coral) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 8px 30px rgba(255, 181, 186, 0.5);
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { box-shadow: 0 8px 30px rgba(255, 181, 186, 0.5); }
+            50% { box-shadow: 0 12px 40px rgba(255, 181, 186, 0.7); }
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 课程页 */
+        .courses-header {
+            padding: 50px 24px 20px;
+        }
+
+        .courses-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .courses-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* 分类标签 */
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            padding: 0 24px 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            padding: 12px 24px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--soft-coral) 100%);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(255, 181, 186, 0.4);
+        }
+
+        .category-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--warm-pink-light);
+        }
+
+        /* 课程列表 */
+        .courses-list {
+            padding: 0 24px 30px;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 100%);
+            border-radius: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(255, 181, 186, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .course-item:nth-child(2) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--lavender-light) 100%);
+        }
+
+        .course-item:nth-child(3) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--mint-green-light) 100%);
+        }
+
+        .course-item:nth-child(4) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--warm-pink-light) 100%);
+        }
+
+        .course-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(255, 181, 186, 0.2);
+        }
+
+        .course-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--cream-yellow) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            animation: gentleWiggle 3s ease-in-out infinite;
+        }
+
+        @keyframes gentleWiggle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .course-desc {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .course-play {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--soft-coral) 100%);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .course-play:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(255, 181, 186, 0.5);
+        }
+
+        /* 个人中心页 */
+        .profile-header {
+            padding: 50px 24px 30px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--lavender-light) 0%, transparent 100%);
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--cream-yellow) 50%, var(--lavender) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 8px 30px rgba(255, 181, 186, 0.4);
+            animation: avatarFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .avatar-ring {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 3px dashed var(--warm-pink);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .profile-level {
+            font-size: 14px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, var(--warm-pink) 0%, var(--soft-coral) 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* 统计数据 */
+        .stats-section {
+            padding: 0 24px 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 100%);
+            border-radius: 20px;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 181, 186, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-item:nth-child(2) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--lavender-light) 100%);
+        }
+
+        .stat-item:nth-child(3) {
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--mint-green-light) 100%);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* 成就 */
+        .achievements-section {
+            padding: 20px 24px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .achievement-item {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream-yellow-light) 100%);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 181, 186, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .achievement-item:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .achievement-item.unlocked {
+            background: linear-gradient(135deg, var(--warm-pink-light) 0%, var(--cream-yellow) 100%);
+        }
+
+        .achievement-icon {
+            font-size: 28px;
+        }
+
+        .achievement-name {
+            font-size: 10px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* 设置列表 */
+        .settings-section {
+            padding: 20px 24px 100px;
+        }
+
+        .settings-list {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 181, 186, 0.2);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .settings-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--warm-pink-light) 0%, var(--cream-yellow-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .settings-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .settings-arrow {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 252, 248, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px 30px 0 0;
+            padding: 15px 30px 30px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -5px 30px rgba(255, 181, 186, 0.2);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--warm-pink-light) 0%, var(--cream-yellow-light) 100%);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover .nav-icon {
+            transform: scale(1.2);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--text-dark);
+        }
+
+        /* 棉花糖粒子效果 */
+        .marshmallow {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+            animation: marshmallowFloat 15s ease-in-out infinite;
+        }
+
+        @keyframes marshmallowFloat {
+            0%, 100% { 
+                transform: translateY(100vh) rotate(0deg); 
+                opacity: 0;
+            }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { 
+                transform: translateY(-100px) rotate(360deg); 
+                opacity: 0;
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 430px) {
+            .app-container {
+                max-width: 100%;
+            }
+            .bottom-nav {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="cloud-bg">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+    </div>
+    
+    <!-- 星星 -->
+    <div class="star" style="top: 15%; left: 10%;">✦</div>
+    <div class="star" style="top: 25%; right: 15%; animation-delay: 0.5s;">✦</div>
+    <div class="star" style="top: 45%; left: 5%; animation-delay: 1s;">✦</div>
+    <div class="star" style="top: 65%; right: 10%; animation-delay: 1.5s;">✦</div>
+    <div class="star" style="top: 80%; left: 20%; animation-delay: 2s;">✦</div>
+
+    <div class="app-container">
+        <!-- 首页 -->
+        <div class="page home-page active" id="home">
+            <div class="home-header">
+                <div class="greeting">☀️ 早安</div>
+                <div class="user-name">小云朵</div>
+            </div>
+
+            <!-- 呼吸圆环 -->
+            <div class="breath-container">
+                <div class="breath-ring">
+                    <div class="breath-cloud breath-cloud-1"></div>
+                    <div class="breath-cloud breath-cloud-2"></div>
+                    <div class="breath-cloud breath-cloud-3"></div>
+                    <div class="breath-center">
+                        <div class="breath-text">吸气</div>
+                        <div class="breath-sub">4秒</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 今日状态 -->
+            <div class="status-section">
+                <div class="section-title">今日状态</div>
+                <div class="status-cards">
+                    <div class="status-card">
+                        <div class="status-icon">🧘</div>
+                        <div class="status-value">12</div>
+                        <div class="status-label">冥想分钟</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-icon">🔥</div>
+                        <div class="status-value">5</div>
+                        <div class="status-label">连续天数</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-icon">💤</div>
+                        <div class="status-value">8h</div>
+                        <div class="status-label">睡眠质量</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-icon">😊</div>
+                        <div class="status-value">85%</div>
+                        <div class="status-label">心情指数</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 推荐课程 -->
+            <div class="recommend-section">
+                <div class="section-title">为你推荐</div>
+                <div class="course-scroll">
+                    <div class="course-card">
+                        <div class="course-emoji">🌸</div>
+                        <div class="course-name">晨间唤醒</div>
+                        <div class="course-duration">10 分钟</div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-emoji">🌙</div>
+                        <div class="course-name">深度睡眠</div>
+                        <div class="course-duration">20 分钟</div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-emoji">🍃</div>
+                        <div class="course-name">焦虑缓解</div>
+                        <div class="course-duration">15 分钟</div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-emoji">✨</div>
+                        <div class="course-name">专注力</div>
+                        <div class="course-duration">12 分钟</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 播放器页 -->
+        <div class="page player-page" id="player">
+            <div class="player-header">
+                <button class="back-btn" onclick="showPage('home')">←</button>
+                <div class="player-title">正在播放</div>
+                <button class="more-btn">⋯</button>
+            </div>
+
+            <div class="player-visual">
+                <div class="visual-container">
+                    <div class="visual-ring visual-ring-1"></div>
+                    <div class="visual-ring visual-ring-2"></div>
+                    <div class="visual-ring visual-ring-3"></div>
+                    <div class="visual-center">
+                        <div class="visual-emoji">🌸</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 音频波浪 -->
+            <div class="wave-container">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+
+            <div class="player-info">
+                <div class="track-name">晨间唤醒冥想</div>
+                <div class="track-subtitle">温柔开启美好一天</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="time-display">
+                    <span>04:30</span>
+                    <span>10:00</span>
+                </div>
+            </div>
+
+            <div class="player-controls">
+                <button class="control-btn">⏮</button>
+                <button class="control-btn">⏪</button>
+                <button class="control-btn play-btn">▶</button>
+                <button class="control-btn">⏩</button>
+                <button class="control-btn">⏭</button>
+            </div>
+        </div>
+
+        <!-- 课程页 -->
+        <div class="page courses-page" id="courses">
+            <div class="courses-header">
+                <div class="courses-title">探索课程</div>
+                <div class="courses-subtitle">找到属于你的内心平静</div>
+            </div>
+
+            <div class="category-tabs">
+                <button class="category-tab active">全部</button>
+                <button class="category-tab">睡眠</button>
+                <button class="category-tab">焦虑</button>
+                <button class="category-tab">专注</button>
+                <button class="category-tab">情绪</button>
+            </div>
+
+            <div class="courses-list">
+                <div class="course-item">
+                    <div class="course-icon">🌙</div>
+                    <div class="course-info">
+                        <div class="course-title">深度睡眠引导</div>
+                        <div class="course-desc">温柔的声音带你进入甜美梦乡</div>
+                        <div class="course-meta">
+                            <span>⏱ 20分钟</span>
+                            <span>👤 12.5万人练习</span>
+                        </div>
+                    </div>
+                    <button class="course-play">▶</button>
+                </div>
+
+                <div class="course-item">
+                    <div class="course-icon">🍃</div>
+                    <div class="course-info">
+                        <div class="course-title">焦虑缓解冥想</div>
+                        <div class="course-desc">释放压力，找回内心宁静</div>
+                        <div class="course-meta">
+                            <span>⏱ 15分钟</span>
+                            <span>👤 8.3万人练习</span>
+                        </div>
+                    </div>
+                    <button class="course-play">▶</button>
+                </div>
+
+                <div class="course-item">
+                    <div class="course-icon">✨</div>
+                    <div class="course-info">
+                        <div class="course-title">专注力训练</div>
+                        <div class="course-desc">提升注意力，高效工作学习</div>
+                        <div class="course-meta">
+                            <span>⏱ 12分钟</span>
+                            <span>👤 6.7万人练习</span>
+                        </div>
+                    </div>
+                    <button class="course-play">▶</button>
+                </div>
+
+                <div class="course-item">
+                    <div class="course-icon">💝</div>
+                    <div class="course-info">
+                        <div class="course-title">自我关爱冥想</div>
+                        <div class="course-desc">学会爱自己，接纳真实的自己</div>
+                        <div class="course-meta">
+                            <span>⏱ 18分钟</span>
+                            <span>👤 5.2万人练习</span>
+                        </div>
+                    </div>
+                    <button class="course-play">▶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 个人中心页 -->
+        <div class="page profile-page" id="profile">
+            <div class="profile-header">
+                <div class="avatar-container">
+                    <div class="avatar-ring"></div>
+                    <div class="avatar">☁️</div>
+                </div>
+                <div class="profile-name">小云朵</div>
+                <div class="profile-level">
+                    <span>禅修新手</span>
+                    <span class="level-badge">Lv.3</span>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon">🧘</div>
+                        <div class="stat-value">36</div>
+                        <div class="stat-label">总时长(小时)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value">28</div>
+                        <div class="stat-label">练习天数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">连续打卡</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievements-section">
+                <div class="section-title">我的成就</div>
+                <div class="achievements-grid">
+                    <div class="achievement-item unlocked">
+                        <div class="achievement-icon">🌟</div>
+                        <div class="achievement-name">初学者</div>
+                    </div>
+                    <div class="achievement-item unlocked">
+                        <div class="achievement-icon">🔥</div>
+                        <div class="achievement-name">坚持者</div>
+                    </div>
+                    <div class="achievement-item unlocked">
+                        <div class="achievement-icon">🌙</div>
+                        <div class="achievement-name">夜猫子</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">🏆</div>
+                        <div class="achievement-name">大师</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">💎</div>
+                        <div class="achievement-name">探索者</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">🎯</div>
+                        <div class="achievement-name">专注者</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">❤️</div>
+                        <div class="achievement-name">爱心</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">🌈</div>
+                        <div class="achievement-name">彩虹</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-title">设置</div>
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <div class="settings-left">
+                            <div class="settings-icon">🔔</div>
+                            <div class="settings-text">提醒设置</div>
+                        </div>
+                        <div class="settings-arrow">›</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-left">
+                            <div class="settings-icon">🎵</div>
+                            <div class="settings-text">音效设置</div>
+                        </div>
+                        <div class="settings-arrow">›</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-left">
+                            <div class="settings-icon">🌙</div>
+                            <div class="settings-text">深色模式</div>
+                        </div>
+                        <div class="settings-arrow">›</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-left">
+                            <div class="settings-icon">📊</div>
+                            <div class="settings-text">数据统计</div>
+                        </div>
+                        <div class="settings-arrow">›</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-left">
+                            <div class="settings-icon">❓</div>
+                            <div class="settings-text">帮助与反馈</div>
+                        </div>
+                        <div class="settings-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">首页</div>
+            </div>
+            <div class="nav-item" onclick="showPage('courses')">
+                <div class="nav-icon">📚</div>
+                <div class="nav-label">课程</div>
+            </div>
+            <div class="nav-item" onclick="showPage('player')">
+                <div class="nav-icon">🎵</div>
+                <div class="nav-label">播放</div>
+            </div>
+            <div class="nav-item" onclick="showPage('profile')">
+                <div class="nav-icon">👤</div>
+                <div class="nav-label">我的</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 根据页面设置对应导航项为激活状态
+            const navItems = document.querySelectorAll('.nav-item');
+            if (pageId === 'home') navItems[0].classList.add('active');
+            if (pageId === 'courses') navItems[1].classList.add('active');
+            if (pageId === 'player') navItems[2].classList.add('active');
+            if (pageId === 'profile') navItems[3].classList.add('active');
+        }
+
+        // 呼吸动画文字切换
+        const breathTexts = [
+            { text: '吸气', sub: '4秒' },
+            { text: '保持', sub: '4秒' },
+            { text: '呼气', sub: '4秒' },
+            { text: '保持', sub: '4秒' }
+        ];
+        let breathIndex = 0;
+        
+        setInterval(() => {
+            breathIndex = (breathIndex + 1) % breathTexts.length;
+            const breathText = document.querySelector('.breath-text');
+            const breathSub = document.querySelector('.breath-sub');
+            if (breathText && breathSub) {
+                breathText.textContent = breathTexts[breathIndex].text;
+                breathSub.textContent = breathTexts[breathIndex].sub;
+            }
+        }, 4000);
+
+        // 分类标签切换
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 播放按钮切换
+        document.querySelectorAll('.course-play, .play-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.classList.contains('play-btn')) {
+                    this.textContent = this.textContent === '▶' ? '⏸' : '▶';
+                }
+            });
+        });
+
+        // 创建棉花糖粒子
+        function createMarshmallow() {
+            const marshmallow = document.createElement('div');
+            marshmallow.className = 'marshmallow';
+            marshmallow.innerHTML = ['☁️', '🍬', '✨', '🌸', '💫'][Math.floor(Math.random() * 5)];
+            marshmallow.style.left = Math.random() * 100 + 'vw';
+            marshmallow.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            marshmallow.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            marshmallow.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(marshmallow);
+            
+            setTimeout(() => {
+                marshmallow.remove();
+            }, 20000);
+        }
+
+        // 定期创建棉花糖
+        setInterval(createMarshmallow, 3000);
+
+        // 初始化创建几个棉花糖
+        for (let i = 0; i < 3; i++) {
+            setTimeout(createMarshmallow, i * 1000);
+        }
+
+        // 推荐课程卡片点击
+        document.querySelectorAll('.course-card').forEach(card => {
+            card.addEventListener('click', function() {
+                showPage('player');
+            });
+        });
+
+        // 设置项点击效果
+        document.querySelectorAll('.settings-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

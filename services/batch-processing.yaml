@@ -1,0 +1,25 @@
+# 批量处理配置
+batch_processing:
+  enabled: true
+  max_batch_size: 5
+  max_wait_time: 10000  # 10秒
+  
+  # 合并规则
+  merge_rules:
+    - type: volume_adjustment
+      pattern: "音量.*(\\d+)"
+      merge_strategy: keep_last
+      
+    - type: duration_change
+      pattern: "时长.*(\\d+)分钟"
+      merge_strategy: keep_last
+      
+    - type: file_upload
+      pattern: "上传.*文件"
+      merge_strategy: sequential
+
+  # 用户提示
+  user_prompts:
+    batching: "检测到多个请求，正在批量处理中..."
+    merged: "多个相似请求已合并，使用最后一个参数"
+    sequential: "多个文件请求将按顺序处理"
