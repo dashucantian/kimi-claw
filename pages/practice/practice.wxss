@@ -1,0 +1,205 @@
+/**pages/practice/practice.wxss**/
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A1628 0%, #1a2540 100%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.status-bar {
+  width: 100%;
+}
+
+/* 顶部标题栏 */
+.top-bar {
+  padding: 60px 20px 6px;
+  text-align: center;
+}
+
+.top-bar-title {
+  font-size: 11px;
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(245, 241, 232, 0.1);
+  padding-bottom: 6px;
+  display: inline-block;
+}
+
+/* 顶部导航 */
+.practice-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px 15px;
+  z-index: 10;
+}
+
+.back-btn {
+  color: rgba(245, 241, 232, 0.6);
+  font-size: 14px;
+  padding: 8px;
+}
+
+.practice-title {
+  flex: 1;
+  text-align: center;
+}
+
+.title-main {
+  display: block;
+  font-size: 16px;
+  color: #F5F1E8;
+  font-weight: 500;
+}
+
+.title-sub {
+  display: block;
+  font-size: 12px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 2px;
+}
+
+.audio-toggle {
+  padding: 8px;
+  font-size: 18px;
+}
+
+/* 呼吸背景 */
+.breath-bg {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(107, 91, 149, 0.2) 0%, transparent 70%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.breath-bg.breathing {
+  animation: breathe-bg 4s ease-in-out infinite;
+}
+
+@keyframes breathe-bg {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+}
+
+/* 计时器区域 */
+.timer-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.timer-ring {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 2px solid rgba(107, 91, 149, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.timer-ring::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #6B5B95;
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.timer {
+  font-size: 56px;
+  font-weight: 200;
+  color: #F5F1E8;
+  letter-spacing: 4px;
+  font-family: 'SF Mono', 'DIN Alternate', monospace;
+}
+
+.stage-label {
+  font-size: 18px;
+  color: #88B0A8;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.guide-text {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.7);
+  text-align: center;
+  max-width: 240px;
+  line-height: 1.6;
+  min-height: 44px;
+}
+
+/* 进度指示 */
+.progress-dots {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(245, 241, 232, 0.2);
+}
+
+.progress-dot.completed {
+  background: #6B5B95;
+}
+
+.progress-dot.active {
+  background: #6B5B95;
+  box-shadow: 0 0 10px rgba(107, 91, 149, 0.5);
+}
+
+/* 控制按钮 */
+.controls {
+  display: flex;
+  gap: 20px;
+  padding: 30px 40px 50px;
+  justify-content: center;
+  z-index: 10;
+}
+
+.control-btn {
+  padding: 14px 36px;
+  border-radius: 24px;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #F5F1E8;
+}
+
+.control-btn.start {
+  background: linear-gradient(135deg, #6B5B95 0%, #4a3d6b 100%);
+}
+
+.control-btn.pause {
+  background: rgba(232, 168, 124, 0.9);
+  color: #0A1628;
+}
+
+.control-btn.end {
+  background: rgba(244, 67, 54, 0.9);
+}

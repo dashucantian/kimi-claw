@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <!-- 练习图标激活 - 蓝色 -->
+  <circle cx="24" cy="24" r="18" fill="none" stroke="#4a9eff" stroke-width="2"/>
+  <circle cx="24" cy="24" r="8" fill="none" stroke="#4a9eff" stroke-width="2"/>
+  <path d="M24 12 L24 16 M24 32 L24 36 M12 24 L16 24 M32 24 L36 24" stroke="#4a9eff" stroke-width="2"/>
+</svg>
