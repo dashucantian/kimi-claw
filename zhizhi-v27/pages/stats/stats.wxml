@@ -1,0 +1,87 @@
+<!-- pages/stats/stats.wxml -->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="title">修行记录</text>
+    <text class="subtitle">见证你的成长</text>
+  </view>
+
+  <!-- 总览卡片 -->
+  <view class="overview-card">
+    <view class="overview-item">
+      <text class="overview-number">{{totalSessions}}</text>
+      <text class="overview-label">总练习次数</text>
+    </view>
+    <view class="overview-divider"></view>
+    
+    <view class="overview-item">
+      <text class="overview-number">{{totalHours}}</text>
+      <text class="overview-label">总小时数</text>
+    </view>
+    <view class="overview-divider"></view>
+    
+    <view class="overview-item">
+      <text class="overview-number">{{currentStreak}}</text>
+      <text class="overview-label">连续天数</text>
+    </view>
+  </view>
+
+  <!-- 本周统计 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">本周练习</text>
+      <text class="section-subtitle">{{weeklyCount}}次 / {{weeklyMinutes}}分钟</text>
+    </view>
+    
+    <view class="week-calendar">
+      <view wx:for="{{weekDays}}" wx:key="day" class="day-item {{item.hasPractice ? 'active' : ''}}">
+        <text class="day-name">{{item.name}}</text>
+        <view class="day-dot"></view>
+        <text class="day-count" wx:if="{{item.count > 0}}">{{item.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">最近记录</text>
+      <text class="clear-btn" bindtap="clearHistory" wx:if="{{history.length > 0}}">清空</text>
+    </view>
+    
+    <view class="history-list" wx:if="{{history.length > 0}}">
+      <view wx:for="{{history}}" wx:key="id" class="history-item">
+        <view class="history-main">
+          <view class="history-date">
+            <text class="date-day">{{item.day}}</text>
+            <text class="date-month">{{item.month}}月</text>
+          </view>
+          
+          <view class="history-info">
+            <text class="history-duration">{{item.duration}}分钟止观</text>
+            <text class="history-mode">{{item.modeText}}</text>
+          </view>
+          
+          <view class="history-rating" wx:if="{{item.rating > 0}}">
+            <text class="rating-stars">{{item.stars}}</text>
+          </view>
+        </view>
+        
+        <view class="history-notes" wx:if="{{item.notes}}">
+          <text>{{item.notes}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">🧘</text>
+      <text class="empty-text">还没有练习记录</text>
+      <text class="empty-subtext">开始你的第一次止观练习吧</text>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="footer-tips" wx:if="{{history.length > 0}}">
+    <text>💡 坚持练习，培养觉知的力量</text>
+  </view>
+</view>

@@ -1,0 +1,186 @@
+/**pages/index/index.wxss**/
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A1628 0%, #1a2540 100%);
+  padding: 0 20px 30px;
+  box-sizing: border-box;
+}
+
+.status-bar {
+  width: 100%;
+}
+
+/* 头部 */
+.header {
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
+.greeting {
+  display: block;
+  font-size: 28px;
+  font-weight: 300;
+  color: #F5F1E8;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+
+.sub-greeting {
+  display: block;
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 4px;
+}
+
+/* 统计卡片 */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  flex: 1;
+  background: rgba(245, 241, 232, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(245, 241, 232, 0.1);
+}
+
+.stat-number {
+  display: block;
+  font-size: 32px;
+  font-weight: 300;
+  color: #88B0A8;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+/* 主操作区 */
+.main-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+/* ===== 简化呼吸圆环 ===== */
+.breath-ring-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 30px;
+}
+
+.breath-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6B5B95, #88B0A8);
+  padding: 4px;
+  animation: breathPulse 8s ease-in-out infinite;
+}
+
+.breath-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(10, 22, 40, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.breath-text {
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: #F5F1E8;
+}
+
+.breath-hint {
+  font-size: 12px;
+  margin-top: 8px;
+  letter-spacing: 2px;
+  color: rgba(245, 241, 232, 0.6);
+}
+
+@keyframes breathPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* 暂停状态 */
+.breath-ring.paused {
+  animation: none;
+}
+
+.current-setting {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 2px;
+  margin-top: 16px;
+}
+
+/* 选择器标题 */
+.section-title {
+  font-size: 14px;
+  color: rgba(245, 241, 232, 0.6);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #F5F1E8);
+  opacity: 0.3;
+}
+
+/* 时长选择 */
+.duration-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.duration-option {
+  flex: 1;
+  padding: 12px 8px;
+  background: rgba(245, 241, 232, 0.08);
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.duration-option.active {
+  background: rgba(107, 91, 149, 0.3);
+  border-color: #6B5B95;
+}
+
+.duration-num {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #F5F1E8;
+}
+
+.duration-unit {
+  display: block;
+  font-size: 11px;
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 2px;
+}

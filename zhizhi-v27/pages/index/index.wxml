@@ -1,0 +1,66 @@
+/**pages/index/index.wxml**/
+<view class="page-container">
+  <view class="status-bar" style="height: {{statusBarHeight}}px;"></view>
+  
+  <!-- 头部问候 -->
+  <view class="header">
+    <text class="greeting">{{greeting}}</text>
+    <text class="sub-greeting">每日止观，回归当下</text>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-number">{{todayCount}}</text>
+      <text class="stat-label">今日练习</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{streak}}</text>
+      <text class="stat-label">连续天数</text>
+    </view>
+  </view>
+
+  <!-- 主操作区 - 呼吸光球 -->
+  <view class="main-action">
+    <view class="breath-ring-container" bindtap="startPractice">
+      <!-- 简化呼吸圆环 -->
+      <view class="breath-ring {{breathing ? '' : 'paused'}}">
+        <view class="breath-ring-inner">
+          <text class="breath-text">止止</text>
+          <text class="breath-hint">点击开始</text>
+        </view>
+      </view>
+    </view>
+
+    <text class="current-setting">{{duration}}分钟</text>
+  </view>
+
+  <!-- 时长选择 -->
+  <view class="section-title">选择时长</view>
+  <view class="duration-selector">
+    <view 
+      class="duration-option {{duration === 3 ? 'active' : ''}}"
+      bindtap="selectDuration"
+      data-duration="3"
+    >
+      <text class="duration-num">3</text>
+      <text class="duration-unit">分钟</text>
+    </view>
+    <view 
+      class="duration-option {{duration === 15 ? 'active' : ''}}"
+      bindtap="selectDuration"
+      data-duration="15"
+    >
+      <text class="duration-num">15</text>
+      <text class="duration-unit">分钟</text>
+    </view>
+    <view 
+      class="duration-option {{duration === 5 ? 'active' : ''}}"
+      bindtap="selectDuration"
+      data-duration="5"
+    >
+      <text class="duration-num">5</text>
+      <text class="duration-unit">分钟</text>
+    </view>
+  </view>
+</view>
