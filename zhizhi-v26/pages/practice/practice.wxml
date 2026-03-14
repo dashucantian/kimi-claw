@@ -1,0 +1,61 @@
+/**pages/practice/practice.wxml**/
+<view class="page-container">
+  <!-- 状态栏 -->
+  <view class="status-bar" style="height: {{statusBarHeight}}px;"></view>
+  
+  <!-- 顶部标题栏 -->
+  <view class="top-bar">
+    <text class="top-bar-title">止止 — 数字洪流中的心智锚点</text>
+  </view>
+  
+  <!-- 顶部导航 -->
+  <view class="practice-header">
+    <view class="back-btn" bindtap="goBack">← 返回</view>
+    <view class="practice-title">
+      <text class="title-main">{{duration}}分钟止观</text>
+    </view>
+    <view class="audio-toggle" bindtap="toggleAudio">
+      <text>{{audioEnabled ? '🔔' : '🔕'}}</text>
+    </view>
+  </view>
+
+  <!-- 呼吸背景 -->
+  <view class="breath-bg {{isPlaying ? 'breathing' : ''}}"></view>
+
+  <!-- 计时器区域 -->
+  <view class="timer-section">
+    <view class="timer-ring">
+      <view class="timer">{{formattedTime}}</view>
+    </view>
+
+    <view class="stage-label">{{stageLabel}}</view>
+    
+    <view class="guide-text">{{guideText}}</view>
+
+    <!-- 进度指示 -->
+    <view class="progress-dots">
+      <view class="progress-dot {{currentStage >= 0 ? 'completed' : ''}} {{currentStage === 0 ? 'active' : ''}}"></view>
+      <view class="progress-dot {{currentStage >= 1 ? 'completed' : ''}} {{currentStage === 1 ? 'active' : ''}}"></view>
+      <view class="progress-dot {{currentStage >= 2 ? 'completed' : ''}} {{currentStage === 2 ? 'active' : ''}}"></view>
+      <view class="progress-dot {{currentStage >= 3 ? 'completed' : ''}} {{currentStage === 3 ? 'active' : ''}}"></view>
+      <view class="progress-dot {{currentStage >= 4 ? 'completed' : ''}} {{currentStage === 4 ? 'active' : ''}}"></view>
+    </view>
+  </view>
+
+  <!-- 控制按钮 -->
+  <view class="controls">
+    <block wx:if="{{!isPlaying && !isPaused}}">
+      <button class="control-btn start" bindtap="startTimer">开始练习</button>
+    </block>
+    
+    <block wx:if="{{isPlaying}}">
+      <button class="control-btn pause" bindtap="pauseTimer">暂停</button>
+      <button class="control-btn end" bindtap="endPractice">结束</button>
+    </block>
+    
+    <block wx:if="{{isPaused}}">
+      <button class="control-btn start" bindtap="resumeTimer">继续</button>
+      <button class="control-btn end" bindtap="endPractice">结束</button>
+    </block>
+  </view>
+</view>
